@@ -2,3 +2,4 @@
 # Project exclude paths
 /ship-client-spring-boot-starter/target/
 /ship-common/target/
+/.idea/
