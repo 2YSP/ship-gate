@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://127.0.0.1:3306/my_springboot?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    url: jdbc:mysql://127.0.0.1:3306/ship?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
     username: root
     password: 1234
     driver-class-name: com.mysql.jdbc.Driver
