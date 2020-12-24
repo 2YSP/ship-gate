@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class OkhttpTool {
 
+    private static final String HTTP_JSON = "application/json;charset=utf-8";
+
     private static Gson gson = new GsonBuilder().create();
 
     private static OkHttpClient client;
@@ -36,7 +38,7 @@ public class OkhttpTool {
      * @param <T>
      */
     public static <T> void post(String url, T t) {
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), gson.toJson(t));
+        RequestBody requestBody = RequestBody.create(MediaType.parse(HTTP_JSON), gson.toJson(t));
         Request request = new Request.Builder()
                 .post(requestBody)
                 .url(url)

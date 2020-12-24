@@ -6,6 +6,7 @@ import cn.sp.constants.EnabledEnum;
 import cn.sp.pojo.dto.RegisterAppDTO;
 import cn.sp.mapper.AppInstanceMapper;
 import cn.sp.mapper.AppMapper;
+import cn.sp.pojo.dto.UnregisterAppDTO;
 import cn.sp.service.AppService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.gson.Gson;
@@ -38,9 +39,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public void register(RegisterAppDTO registerAppDTO) {
-        QueryWrapper<App> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(App::getAppName, registerAppDTO.getAppName());
-        App app = appMapper.selectOne(wrapper);
+        App app = queryByAppName(registerAppDTO.getAppName());
         if (app == null) {
             // first register
             app = new App();
@@ -59,5 +58,23 @@ public class AppServiceImpl implements AppService {
         LOGGER.info("register app success,dto:[{}]", gson.toJson(registerAppDTO));
     }
 
+    @Override
+    public void unregister(UnregisterAppDTO dto) {
+        App app = queryByAppName(dto.getAppName());
+        if (app == null) {
+            return;
+        }
+        QueryWrapper<AppInstance> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(AppInstance::getAppId, app.getId())
+                .eq(AppInstance::getVersion, dto.getVersion());
+        instanceMapper.delete(wrapper);
+        LOGGER.info("unregister app instance success,dto:[{}]", gson.toJson(dto));
+    }
 
+    private App queryByAppName(String appName) {
+        QueryWrapper<App> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(App::getAppName, appName);
+        App app = appMapper.selectOne(wrapper);
+        return app;
+    }
 }

@@ -1,6 +1,7 @@
 package cn.sp.service;
 
 import cn.sp.pojo.dto.RegisterAppDTO;
+import cn.sp.pojo.dto.UnregisterAppDTO;
 
 /**
  * @Author: Ship
@@ -14,4 +15,10 @@ public interface AppService {
      * @param registerAppDTO
      */
     void register(RegisterAppDTO registerAppDTO);
+
+    /**
+     * unregister app instance
+     * @param unregisterAppDTO
+     */
+    void unregister(UnregisterAppDTO unregisterAppDTO);
 }

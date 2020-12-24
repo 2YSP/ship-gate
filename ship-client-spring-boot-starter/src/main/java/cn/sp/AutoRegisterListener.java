@@ -3,6 +3,7 @@ package cn.sp;
 import cn.sp.constants.AdminConstants;
 import cn.sp.exception.ShipException;
 import cn.sp.pojo.dto.RegisterAppDTO;
+import cn.sp.pojo.dto.UnregisterAppDTO;
 import cn.sp.utils.IpUtil;
 import cn.sp.utils.OkhttpTool;
 import com.alibaba.nacos.api.annotation.NacosInjected;
@@ -35,7 +36,7 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
 
     private volatile AtomicBoolean registered = new AtomicBoolean(false);
 
-    private final ClientConfigProperties configProperties;
+    private final ClientConfigProperties properties;
 
     @NacosInjected
     private NamingService namingService;
@@ -54,25 +55,25 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
         ignoreUrlList.add("/error");
     }
 
-    public AutoRegisterListener(ClientConfigProperties configProperties) {
-        if (!check(configProperties)) {
+    public AutoRegisterListener(ClientConfigProperties properties) {
+        if (!check(properties)) {
             LOGGER.error("client config port,contextPath,appName adminUrl and version can't be empty!");
             throw new ShipException("client config port,contextPath,appName adminUrl and version can't be empty!");
         }
-        this.configProperties = configProperties;
+        this.properties = properties;
         pool = new ThreadPoolExecutor(1, 4, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
     }
 
     /**
      * check the ClientConfigProperties
      *
-     * @param configProperties
+     * @param properties
      * @return
      */
-    private boolean check(ClientConfigProperties configProperties) {
-        if (configProperties.getPort() == null || configProperties.getContextPath() == null
-                || configProperties.getVersion() == null || configProperties.getAppName() == null
-                || configProperties.getAdminUrl() == null) {
+    private boolean check(ClientConfigProperties properties) {
+        if (properties.getPort() == null || properties.getContextPath() == null
+                || properties.getVersion() == null || properties.getAppName() == null
+                || properties.getAdminUrl() == null) {
             return false;
         }
         return true;
@@ -85,6 +86,21 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
             return;
         }
         doRegister();
+        registerShutDownHook();
+    }
+
+    /**
+     * send unregister request to admin when jvm shutdown
+     */
+    private void registerShutDownHook() {
+        final String url = "http://" + properties.getAdminUrl() + AdminConstants.UNREGISTER_PATH;
+        final UnregisterAppDTO unregisterAppDTO = new UnregisterAppDTO();
+        unregisterAppDTO.setAppName(properties.getAppName());
+        unregisterAppDTO.setVersion(properties.getVersion());
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            OkhttpTool.post(url, unregisterAppDTO);
+            LOGGER.info(unregisterAppDTO.getAppName() + ":" + unregisterAppDTO.getVersion() + " unregister from ship-admin success!");
+        }));
     }
 
     /**
@@ -93,11 +109,11 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
     private void doRegister() {
         Instance instance = new Instance();
         instance.setIp(IpUtil.getLocalIpAddress());
-        instance.setPort(configProperties.getPort());
+        instance.setPort(properties.getPort());
         instance.setEphemeral(true);
         Map<String, String> metadataMap = new HashMap<>();
-        metadataMap.put("version", configProperties.getVersion());
-        metadataMap.put("appName", configProperties.getAppName());
+        metadataMap.put("version", properties.getVersion());
+        metadataMap.put("appName", properties.getAppName());
         instance.setMetadata(metadataMap);
         List<String> serviceNames = getAllServiceName();
         for (String serviceName : serviceNames) {
@@ -112,22 +128,22 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
             });
         }
         // todo check register result
-        LOGGER.info("register interface info to nacos successfully!");
+        LOGGER.info("register interface info to nacos success!");
         // send register request to ship-admin
-        String url = "http://" + configProperties.getAdminUrl() + AdminConstants.REGISTER_PATH;
+        String url = "http://" + properties.getAdminUrl() + AdminConstants.REGISTER_PATH;
         RegisterAppDTO registerAppDTO = buildRegisterAppDTO(instance);
         OkhttpTool.post(url, registerAppDTO);
-        LOGGER.info("register to ship-admin successfully!");
+        LOGGER.info("register to ship-admin success!");
     }
 
 
     private RegisterAppDTO buildRegisterAppDTO(Instance instance) {
         RegisterAppDTO registerAppDTO = new RegisterAppDTO();
-        registerAppDTO.setAppName(configProperties.getAppName());
-        registerAppDTO.setContextPath(configProperties.getContextPath());
+        registerAppDTO.setAppName(properties.getAppName());
+        registerAppDTO.setContextPath(properties.getContextPath());
         registerAppDTO.setIp(instance.getIp());
         registerAppDTO.setPort(instance.getPort());
-        registerAppDTO.setVersion(configProperties.getVersion());
+        registerAppDTO.setVersion(properties.getVersion());
         return registerAppDTO;
     }
 
@@ -151,8 +167,8 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
             if (ignoreUrlList.contains(serviceName)) {
                 continue;
             }
-            String url = configProperties.getContextPath() + serviceName;
-            result.add(url.replace("/", ".") + ":" + configProperties.getVersion());
+            String url = properties.getContextPath() + serviceName;
+            result.add(url.replace("/", ".") + ":" + properties.getVersion());
         }
         return result;
     }
