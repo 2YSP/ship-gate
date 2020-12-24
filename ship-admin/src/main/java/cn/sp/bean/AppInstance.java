@@ -1,5 +1,6 @@
 package cn.sp.bean;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @TableName("t_app_instance")
 public class AppInstance {
 
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
     private Integer appId;
@@ -20,7 +21,7 @@ public class AppInstance {
 
     private String ip;
 
-    private String port;
+    private Integer port;
 
     private Integer weight;
 
@@ -58,11 +59,11 @@ public class AppInstance {
         this.ip = ip;
     }
 
-    public String getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(String port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 

@@ -1,5 +1,6 @@
 package cn.sp.bean;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -10,10 +11,13 @@ import java.time.LocalDateTime;
  */
 @TableName("t_app")
 public class App {
-    @TableId
+
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
     private String appName;
+
+    private String description;
 
     private String contextPath;
 
@@ -59,5 +63,13 @@ public class App {
 
     public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
