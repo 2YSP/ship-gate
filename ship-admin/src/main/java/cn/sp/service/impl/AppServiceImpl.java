@@ -3,7 +3,7 @@ package cn.sp.service.impl;
 import cn.sp.bean.App;
 import cn.sp.bean.AppInstance;
 import cn.sp.constants.EnabledEnum;
-import cn.sp.dto.RegisterAppDTO;
+import cn.sp.pojo.dto.RegisterAppDTO;
 import cn.sp.mapper.AppInstanceMapper;
 import cn.sp.mapper.AppMapper;
 import cn.sp.service.AppService;

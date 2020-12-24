@@ -1,7 +1,10 @@
 package cn.sp;
 
+import cn.sp.constants.AdminConstants;
 import cn.sp.exception.ShipException;
+import cn.sp.pojo.dto.RegisterAppDTO;
 import cn.sp.utils.IpUtil;
+import cn.sp.utils.OkhttpTool;
 import com.alibaba.nacos.api.annotation.NacosInjected;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
@@ -53,8 +56,8 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
 
     public AutoRegisterListener(ClientConfigProperties configProperties) {
         if (!check(configProperties)) {
-            LOGGER.error("client config port,contextPath,appName and version can't be empty!");
-            throw new ShipException("client config port,contextPath,appName and version can't be empty!");
+            LOGGER.error("client config port,contextPath,appName adminUrl and version can't be empty!");
+            throw new ShipException("client config port,contextPath,appName adminUrl and version can't be empty!");
         }
         this.configProperties = configProperties;
         pool = new ThreadPoolExecutor(1, 4, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
@@ -68,7 +71,8 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
      */
     private boolean check(ClientConfigProperties configProperties) {
         if (configProperties.getPort() == null || configProperties.getContextPath() == null
-                || configProperties.getVersion() == null || configProperties.getAppName() == null) {
+                || configProperties.getVersion() == null || configProperties.getAppName() == null
+                || configProperties.getAdminUrl() == null) {
             return false;
         }
         return true;
@@ -97,7 +101,7 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
         instance.setMetadata(metadataMap);
         List<String> serviceNames = getAllServiceName();
         for (String serviceName : serviceNames) {
-            pool.execute(()->{
+            pool.execute(() -> {
                 try {
                     // serviceName = url:version
                     namingService.registerInstance(serviceName, instance);
@@ -109,7 +113,22 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
         }
         // todo check register result
         LOGGER.info("register interface info to nacos successfully!");
-        // send register info to ship-admin
+        // send register request to ship-admin
+        String url = "http://" + configProperties.getAdminUrl() + AdminConstants.REGISTER_PATH;
+        RegisterAppDTO registerAppDTO = buildRegisterAppDTO(instance);
+        OkhttpTool.post(url, registerAppDTO);
+        LOGGER.info("register to ship-admin successfully!");
+    }
+
+
+    private RegisterAppDTO buildRegisterAppDTO(Instance instance) {
+        RegisterAppDTO registerAppDTO = new RegisterAppDTO();
+        registerAppDTO.setAppName(configProperties.getAppName());
+        registerAppDTO.setContextPath(configProperties.getContextPath());
+        registerAppDTO.setIp(instance.getIp());
+        registerAppDTO.setPort(instance.getPort());
+        registerAppDTO.setVersion(configProperties.getVersion());
+        return registerAppDTO;
     }
 
     /**

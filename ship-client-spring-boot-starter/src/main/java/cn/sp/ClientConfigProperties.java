@@ -25,6 +25,15 @@ public class ClientConfigProperties {
      */
     private String version;
 
+    private String adminUrl;
+
+    public String getAdminUrl() {
+        return adminUrl;
+    }
+
+    public void setAdminUrl(String adminUrl) {
+        this.adminUrl = adminUrl;
+    }
 
     public String getVersion() {
         return version;

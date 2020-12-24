@@ -1,7 +1,5 @@
-package cn.sp.dto;
+package cn.sp.pojo.dto;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 /**
  * @Author: Ship
@@ -9,19 +7,15 @@ import javax.validation.constraints.NotNull;
  * @Date: Created in 2020/12/24
  */
 public class RegisterAppDTO {
-    @NotEmpty(message = "appName is required")
+    
     private String appName;
 
-    @NotEmpty(message = "contextPath is required")
     private String contextPath;
 
-    @NotEmpty(message = "version is required")
     private String version;
 
-    @NotEmpty(message = "ip is required")
     private String ip;
 
-    @NotNull(message = "port is required")
     private Integer port;
 
     public String getAppName() {

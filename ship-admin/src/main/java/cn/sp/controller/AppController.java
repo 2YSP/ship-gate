@@ -1,6 +1,6 @@
 package cn.sp.controller;
 
-import cn.sp.dto.RegisterAppDTO;
+import cn.sp.pojo.dto.RegisterAppDTO;
 import cn.sp.service.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

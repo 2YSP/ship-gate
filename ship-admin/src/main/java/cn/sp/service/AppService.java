@@ -1,6 +1,6 @@
 package cn.sp.service;
 
-import cn.sp.dto.RegisterAppDTO;
+import cn.sp.pojo.dto.RegisterAppDTO;
 
 /**
  * @Author: Ship
