@@ -29,7 +29,7 @@ CREATE TABLE `t_app` (
   `enabled` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否开启，1开启0未开启',
   `created_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `t_app_instance` */
 
@@ -44,7 +44,7 @@ CREATE TABLE `t_app_instance` (
   `weight` int(11) NOT NULL DEFAULT '0' COMMENT '权重',
   `created_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `t_app_plugin` */
 
@@ -54,6 +54,37 @@ CREATE TABLE `t_app_plugin` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `app_id` int(11) NOT NULL COMMENT '应用id',
   `plugin_id` int(11) NOT NULL COMMENT '插件id',
+  `enabled` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否开启，1开启0未开启',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Table structure for table `t_plugin` */
+
+DROP TABLE IF EXISTS `t_plugin`;
+
+CREATE TABLE `t_plugin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '插件名称',
+  `code` varchar(32) NOT NULL DEFAULT '' COMMENT 'eg:DynamicRoute',
+  `description` varchar(50) NOT NULL DEFAULT '' COMMENT '描述',
+  `created_time` datetime NOT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Table structure for table `t_route_rule` */
+
+DROP TABLE IF EXISTS `t_route_rule`;
+
+CREATE TABLE `t_route_rule` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `app_id` int(11) NOT NULL COMMENT '应用Id',
+  `version` varchar(32) NOT NULL DEFAULT '' COMMENT '路由版本',
+  `match_object` varchar(32) NOT NULL DEFAULT '' COMMENT '匹配对象，DEFAULT，QUERY，HEADER',
+  `match_key` varchar(50) NOT NULL DEFAULT '' COMMENT '匹配key',
+  `match_method` tinyint(1) NOT NULL DEFAULT '0' COMMENT '匹配方式,1:=,2:regex,3:like',
+  `match_rule` varchar(50) NOT NULL DEFAULT '' COMMENT '匹配规则',
+  `enabled` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否启用，1=开启0=禁用',
+  `created_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
