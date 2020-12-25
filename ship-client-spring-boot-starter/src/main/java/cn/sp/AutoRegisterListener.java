@@ -129,6 +129,12 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
                 }
             });
         }
+        try {
+            namingService.registerInstance("ship:" + properties.getAppName(), instance);
+        } catch (NacosException e) {
+            LOGGER.error("register to nacos fail", e);
+            throw new ShipException(e.getErrCode(), e.getErrMsg());
+        }
         // todo check register result
         LOGGER.info("register interface info to nacos success!");
         // send register request to ship-admin
