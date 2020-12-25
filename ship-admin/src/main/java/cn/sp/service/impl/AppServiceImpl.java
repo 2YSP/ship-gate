@@ -66,7 +66,9 @@ public class AppServiceImpl implements AppService {
         }
         QueryWrapper<AppInstance> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(AppInstance::getAppId, app.getId())
-                .eq(AppInstance::getVersion, dto.getVersion());
+                .eq(AppInstance::getVersion, dto.getVersion())
+                .eq(AppInstance::getIp, dto.getIp())
+                .eq(AppInstance::getPort, dto.getPort());
         instanceMapper.delete(wrapper);
         LOGGER.info("unregister app instance success,dto:[{}]", gson.toJson(dto));
     }

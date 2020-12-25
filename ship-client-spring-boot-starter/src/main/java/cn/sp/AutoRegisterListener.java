@@ -97,9 +97,11 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
         final UnregisterAppDTO unregisterAppDTO = new UnregisterAppDTO();
         unregisterAppDTO.setAppName(properties.getAppName());
         unregisterAppDTO.setVersion(properties.getVersion());
+        unregisterAppDTO.setIp(IpUtil.getLocalIpAddress());
+        unregisterAppDTO.setPort(properties.getPort());
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             OkhttpTool.post(url, unregisterAppDTO);
-            LOGGER.info(unregisterAppDTO.getAppName() + ":" + unregisterAppDTO.getVersion() + " unregister from ship-admin success!");
+            LOGGER.info("[{}:{}] unregister from ship-admin success!", unregisterAppDTO.getAppName(), unregisterAppDTO.getVersion());
         }));
     }
 
