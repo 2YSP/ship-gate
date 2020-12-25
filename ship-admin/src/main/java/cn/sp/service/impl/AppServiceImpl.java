@@ -2,7 +2,12 @@ package cn.sp.service.impl;
 
 import cn.sp.bean.App;
 import cn.sp.bean.AppInstance;
+import cn.sp.bean.AppPlugin;
+import cn.sp.bean.Plugin;
 import cn.sp.constants.EnabledEnum;
+import cn.sp.exception.ShipException;
+import cn.sp.mapper.AppPluginMapper;
+import cn.sp.mapper.PluginMapper;
 import cn.sp.pojo.dto.RegisterAppDTO;
 import cn.sp.mapper.AppInstanceMapper;
 import cn.sp.mapper.AppMapper;
@@ -15,9 +20,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Author: Ship
@@ -35,27 +42,60 @@ public class AppServiceImpl implements AppService {
     @Resource
     private AppInstanceMapper instanceMapper;
 
+    @Resource
+    private AppPluginMapper appPluginMapper;
+
+    @Resource
+    private PluginMapper pluginMapper;
+
     private Gson gson = new GsonBuilder().create();
 
     @Override
     public void register(RegisterAppDTO registerAppDTO) {
         App app = queryByAppName(registerAppDTO.getAppName());
+        Integer appId;
         if (app == null) {
             // first register
-            app = new App();
-            BeanUtils.copyProperties(registerAppDTO, app);
-            app.setEnabled(EnabledEnum.ENABLE.getCode());
-            app.setCreatedTime(LocalDateTime.now());
-            appMapper.insert(app);
+            appId = addApp(registerAppDTO);
+        } else {
+            appId = app.getId();
         }
         AppInstance appInstance = new AppInstance();
-        appInstance.setAppId(app.getId());
+        appInstance.setAppId(appId);
         appInstance.setIp(registerAppDTO.getIp());
         appInstance.setPort(registerAppDTO.getPort());
         appInstance.setVersion(registerAppDTO.getVersion());
         appInstance.setCreatedTime(LocalDateTime.now());
         instanceMapper.insert(appInstance);
         LOGGER.info("register app success,dto:[{}]", gson.toJson(registerAppDTO));
+    }
+
+    private Integer addApp(RegisterAppDTO registerAppDTO) {
+        App app = new App();
+        BeanUtils.copyProperties(registerAppDTO, app);
+        app.setEnabled(EnabledEnum.ENABLE.getCode());
+        app.setCreatedTime(LocalDateTime.now());
+        appMapper.insert(app);
+        bindPlugins(app);
+        return app.getId();
+    }
+
+    /**
+     * bind app with all plugins
+     * @param app
+     */
+    private void bindPlugins(App app) {
+        List<Plugin> plugins = pluginMapper.selectList(new QueryWrapper<>());
+        if (CollectionUtils.isEmpty(plugins)) {
+            throw new ShipException("must init plugins first!");
+        }
+        plugins.forEach(p -> {
+            AppPlugin appPlugin = new AppPlugin();
+            appPlugin.setAppId(app.getId());
+            appPlugin.setPluginId(p.getId());
+            appPlugin.setEnabled(EnabledEnum.ENABLE.getCode());
+            appPluginMapper.insert(appPlugin);
+        });
     }
 
     @Override
