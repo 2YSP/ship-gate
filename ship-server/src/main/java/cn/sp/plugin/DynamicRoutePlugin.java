@@ -24,9 +24,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -40,12 +38,10 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
 
     private WebClient webClient;
 
-    private ServerConfigProperties configProperties;
 
     public DynamicRoutePlugin(ServerConfigProperties properties) {
         super(properties);
         webClient = WebClient.create();
-        this.configProperties = properties;
     }
 
     @Override
@@ -93,7 +89,7 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
             reqHeadersSpec = requestBodySpec;
         }
         // nio->callback->nio
-        return reqHeadersSpec.exchange().timeout(Duration.ofMillis(3000))
+        return reqHeadersSpec.exchange().timeout(Duration.ofMillis(properties.getTimeOutMillis()))
                 .onErrorResume(ex -> {
                     return Mono.defer(() -> {
                         String errorResultJson = "";
@@ -146,7 +142,7 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
         }
         // todo chose service version by route rule
         //Select an instance based on the load balancing algorithm
-        LoadBalance loadBalance = LoadBalanceFactory.getInstance(configProperties.getLoadBalance(), appName, "dev_1.0");
+        LoadBalance loadBalance = LoadBalanceFactory.getInstance(properties.getLoadBalance(), appName, "dev_1.0");
         ServiceInstance serviceInstance = loadBalance.chooseOne(serviceInstances);
         return serviceInstance;
     }

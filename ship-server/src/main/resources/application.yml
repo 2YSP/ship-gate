@@ -6,5 +6,7 @@ nacos:
 
 
 ship:
-  server:
+  gate:
     load-balance: round
+    time-out-millis: 3000
+    data-refresh-interval: 10

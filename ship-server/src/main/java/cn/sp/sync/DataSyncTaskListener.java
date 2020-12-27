@@ -1,6 +1,7 @@
 package cn.sp.sync;
 
 import cn.sp.cache.ServiceCache;
+import cn.sp.config.ServerConfigProperties;
 import cn.sp.constants.NacosConstants;
 import cn.sp.pojo.dto.ServiceInstance;
 import com.alibaba.nacos.api.annotation.NacosInjected;
@@ -9,6 +10,7 @@ import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.api.naming.pojo.ListView;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -30,10 +32,16 @@ import java.util.concurrent.TimeUnit;
 public class DataSyncTaskListener implements ApplicationListener<ContextRefreshedEvent> {
 
     private static ScheduledThreadPoolExecutor scheduledPool = new ScheduledThreadPoolExecutor(1,
-            new ThreadFactoryBuilder().setNameFormat("data-sync-%d").build());
+            new ThreadFactoryBuilder().setNameFormat("service-sync-%d").build());
+
+    private static ScheduledThreadPoolExecutor rulePool = new ScheduledThreadPoolExecutor(1,
+            new ThreadFactoryBuilder().setNameFormat("route-rule-sync-%d").build());
 
     @NacosInjected
     private NamingService namingService;
+
+    @Autowired
+    private ServerConfigProperties properties;
 
 
     @Override
@@ -42,7 +50,7 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
             return;
         }
         scheduledPool.scheduleWithFixedDelay(new DataSyncTask(namingService)
-                , 0L, 10L, TimeUnit.SECONDS);
+                , 0L, properties.getDataRefreshInterval(), TimeUnit.SECONDS);
     }
 
 
