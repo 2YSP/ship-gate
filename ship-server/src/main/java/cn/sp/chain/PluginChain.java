@@ -1,8 +1,8 @@
 package cn.sp.chain;
 
-import cn.sp.plugin.DynamicRoutePlugin;
+import cn.sp.config.ServerConfigProperties;
+import cn.sp.plugin.AbstractShipPlugin;
 import cn.sp.plugin.ShipPlugin;
-import cn.sp.plugin.TestPlugin;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -15,7 +15,12 @@ import java.util.List;
  * @Description:
  * @Date: Created in 2020/12/25
  */
-public class PluginChain implements ShipPlugin {
+public class PluginChain extends AbstractShipPlugin {
+
+    public PluginChain(ServerConfigProperties properties) {
+        super(properties);
+    }
+
     /**
      * the pos point to current plugin
      */

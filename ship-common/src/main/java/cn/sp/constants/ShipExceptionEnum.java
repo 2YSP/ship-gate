@@ -4,8 +4,14 @@ package cn.sp.constants;
  * Created by 2YSP on 2020/12/23
  */
 public enum ShipExceptionEnum {
-
-    PARAM_ERROR(1000,"参数错误");
+    /**
+     * param error
+     */
+    PARAM_ERROR(1000,"param error"),
+    /**
+     * service not find
+     */
+    SERVICE_NOT_FIND(1001,"service not find,maybe not register");
 
     private Integer code;
 

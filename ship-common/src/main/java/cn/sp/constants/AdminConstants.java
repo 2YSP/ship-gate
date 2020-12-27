@@ -5,7 +5,7 @@ package cn.sp.constants;
  * @Description:
  * @Date: Created in 2020/12/24
  */
-public class AdminConstants {
+public final class AdminConstants {
 
     public static final String REGISTER_PATH = "/app/register";
 

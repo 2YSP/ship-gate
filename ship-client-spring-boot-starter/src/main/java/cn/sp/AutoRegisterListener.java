@@ -1,6 +1,7 @@
 package cn.sp;
 
 import cn.sp.constants.AdminConstants;
+import cn.sp.constants.NacosConstants;
 import cn.sp.exception.ShipException;
 import cn.sp.pojo.dto.RegisterAppDTO;
 import cn.sp.pojo.dto.UnregisterAppDTO;
@@ -117,20 +118,20 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
         metadataMap.put("version", properties.getVersion());
         metadataMap.put("appName", properties.getAppName());
         instance.setMetadata(metadataMap);
-        List<String> serviceNames = getAllServiceName();
-        for (String serviceName : serviceNames) {
-            pool.execute(() -> {
-                try {
-                    // serviceName = url:version
-                    namingService.registerInstance(serviceName, instance);
-                } catch (NacosException e) {
-                    LOGGER.error("register to nacos fail", e);
-                    throw new ShipException("register to nacos fail");
-                }
-            });
-        }
+//        List<String> serviceNames = getAllServiceName();
+//        for (String serviceName : serviceNames) {
+//            pool.execute(() -> {
+//                try {
+//                    // serviceName = url:version
+//                    namingService.registerInstance(serviceName, properties.getAppName(), instance);
+//                } catch (NacosException e) {
+//                    LOGGER.error("register to nacos fail", e);
+//                    throw new ShipException("register to nacos fail");
+//                }
+//            });
+//        }
         try {
-            namingService.registerInstance("ship:" + properties.getAppName(), instance);
+            namingService.registerInstance(properties.getAppName(), NacosConstants.APP_GROUP_NAME, instance);
         } catch (NacosException e) {
             LOGGER.error("register to nacos fail", e);
             throw new ShipException(e.getErrCode(), e.getErrMsg());

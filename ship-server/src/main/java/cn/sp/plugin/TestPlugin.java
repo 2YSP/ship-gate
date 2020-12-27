@@ -1,6 +1,7 @@
 package cn.sp.plugin;
 
 import cn.sp.chain.PluginChain;
+import cn.sp.config.ServerConfigProperties;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -9,8 +10,12 @@ import reactor.core.publisher.Mono;
  * @Description:
  * @Date: Created in 2020/12/25
  */
-public class TestPlugin implements ShipPlugin {
+public class TestPlugin extends AbstractShipPlugin {
 
+
+    public TestPlugin(ServerConfigProperties properties) {
+        super(properties);
+    }
 
     @Override
     public Integer order() {
