@@ -1,6 +1,6 @@
 package cn.sp.plugin;
 
-import cn.sp.annotation.LoadBalanceAno;
+import cn.sp.cache.LoadBalanceFactory;
 import cn.sp.cache.ServiceCache;
 import cn.sp.chain.PluginChain;
 import cn.sp.chain.ShipResponseUtil;
@@ -17,7 +17,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.server.RequestPath;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -41,15 +40,12 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
 
     private WebClient webClient;
 
-    private LoadBalance loadBalance;
-
     private ServerConfigProperties configProperties;
 
     public DynamicRoutePlugin(ServerConfigProperties properties) {
         super(properties);
         webClient = WebClient.create();
         this.configProperties = properties;
-        this.loadBalance = getLoadBalance(properties.getLoadBalance());
     }
 
     @Override
@@ -96,6 +92,7 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
         } else {
             reqHeadersSpec = requestBodySpec;
         }
+        // nio->callback->nio
         return reqHeadersSpec.exchange().timeout(Duration.ofMillis(3000))
                 .onErrorResume(ex -> {
                     return Mono.defer(() -> {
@@ -149,27 +146,11 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
         }
         // todo chose service version by route rule
         //Select an instance based on the load balancing algorithm
+        LoadBalance loadBalance = LoadBalanceFactory.getInstance(configProperties.getLoadBalance(), appName, "dev_1.0");
         ServiceInstance serviceInstance = loadBalance.chooseOne(serviceInstances);
         return serviceInstance;
     }
 
-    /**
-     * use spi to match load balance algorithm by server config
-     * @param name
-     * @return
-     */
-    private LoadBalance getLoadBalance(String name) {
-        ServiceLoader<LoadBalance> loader = ServiceLoader.load(LoadBalance.class);
-        Iterator<LoadBalance> iterator = loader.iterator();
-        while (iterator.hasNext()) {
-            LoadBalance loadBalance = iterator.next();
-            LoadBalanceAno ano = loadBalance.getClass().getAnnotation(LoadBalanceAno.class);
-            Assert.notNull(ano, "load balance name can not be empty!");
-            if (name.equals(ano.value())) {
-                return loadBalance;
-            }
-        }
-        throw new ShipException("invalid load balance config");
-    }
+
 
 }
