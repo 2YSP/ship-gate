@@ -1,6 +1,8 @@
 package cn.sp.config;
 
 import cn.sp.constants.LoadBalanceConstants;
+import cn.sp.constants.ShipExceptionEnum;
+import cn.sp.exception.ShipException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -18,9 +20,9 @@ public class ServerConfigProperties implements InitializingBean {
      */
     private Long timeOutMillis = 3000L;
     /**
-     * 单位s
+     * 缓存刷新间隔，默认10s
      */
-    private Long cacheRefreshInterval;
+    private Long cacheRefreshInterval = 10L;
 
     private Integer webSocketPort;
 
@@ -59,7 +61,9 @@ public class ServerConfigProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // todo check config properties
+        if (this.webSocketPort == null || this.webSocketPort <= 0) {
+            throw new ShipException(ShipExceptionEnum.CONFIG_ERROR);
+        }
     }
 
 }

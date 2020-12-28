@@ -34,17 +34,11 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
     private static ScheduledThreadPoolExecutor scheduledPool = new ScheduledThreadPoolExecutor(1,
             new ShipThreadFactory("service-sync", true).create());
 
-    private static ScheduledThreadPoolExecutor rulePool = new ScheduledThreadPoolExecutor(1,
-            new ShipThreadFactory("route-rule-sync", true).create());
-
     @NacosInjected
     private NamingService namingService;
 
     @Autowired
     private ServerConfigProperties properties;
-
-    private WebsocketSyncCacheServer websocketSyncCacheServer;
-
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -53,7 +47,7 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
         }
         scheduledPool.scheduleWithFixedDelay(new DataSyncTask(namingService)
                 , 0L, properties.getCacheRefreshInterval(), TimeUnit.SECONDS);
-        this.websocketSyncCacheServer = new WebsocketSyncCacheServer(properties.getWebSocketPort());
+        WebsocketSyncCacheServer websocketSyncCacheServer = new WebsocketSyncCacheServer(properties.getWebSocketPort());
         websocketSyncCacheServer.start();
     }
 

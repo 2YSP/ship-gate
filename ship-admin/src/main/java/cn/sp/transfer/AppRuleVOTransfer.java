@@ -1,7 +1,7 @@
 package cn.sp.transfer;
 
 import cn.sp.bean.RouteRule;
-import cn.sp.pojo.vo.AppRuleVO;
+import cn.sp.pojo.dto.AppRuleDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -17,7 +17,7 @@ public interface AppRuleVOTransfer {
 
     AppRuleVOTransfer INSTANCE = Mappers.getMapper(AppRuleVOTransfer.class);
 
-    AppRuleVO mapToVO(RouteRule routeRule);
+    AppRuleDTO mapToVO(RouteRule routeRule);
 
-    List<AppRuleVO> mapToVOList(List<RouteRule> routeRules);
+    List<AppRuleDTO> mapToVOList(List<RouteRule> routeRules);
 }

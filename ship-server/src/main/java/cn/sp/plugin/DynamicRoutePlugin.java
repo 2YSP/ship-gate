@@ -11,7 +11,7 @@ import cn.sp.constants.ShipExceptionEnum;
 import cn.sp.constants.ShipPluginEnum;
 import cn.sp.exception.ShipException;
 import cn.sp.pojo.dto.ServiceInstance;
-import cn.sp.pojo.vo.AppRuleVO;
+import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.spi.LoadBalance;
 import cn.sp.utils.StringTools;
 import com.google.gson.Gson;
@@ -172,9 +172,9 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
 
 
     private String matchAppVersion(String appName, ServerHttpRequest request) {
-        List<AppRuleVO> rules = RouteRuleCache.getRules(appName);
-        rules.sort(Comparator.comparing(AppRuleVO::getPriority).reversed());
-        for (AppRuleVO rule : rules) {
+        List<AppRuleDTO> rules = RouteRuleCache.getRules(appName);
+        rules.sort(Comparator.comparing(AppRuleDTO::getPriority).reversed());
+        for (AppRuleDTO rule : rules) {
             if (match(rule, request)) {
                 return rule.getVersion();
             }
@@ -183,7 +183,7 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
     }
 
 
-    private boolean match(AppRuleVO rule, ServerHttpRequest request) {
+    private boolean match(AppRuleDTO rule, ServerHttpRequest request) {
         String matchObject = rule.getMatchObject();
         String matchKey = rule.getMatchKey();
         String matchRule = rule.getMatchRule();

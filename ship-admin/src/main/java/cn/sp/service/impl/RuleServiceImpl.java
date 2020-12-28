@@ -5,7 +5,7 @@ import cn.sp.bean.RouteRule;
 import cn.sp.constants.EnabledEnum;
 import cn.sp.mapper.AppMapper;
 import cn.sp.mapper.RouteRuleMapper;
-import cn.sp.pojo.vo.AppRuleVO;
+import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.service.RuleService;
 import cn.sp.transfer.AppRuleVOTransfer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -34,7 +34,7 @@ public class RuleServiceImpl implements RuleService {
     private AppMapper appMapper;
 
     @Override
-    public List<AppRuleVO> getEnabledRule() {
+    public List<AppRuleDTO> getEnabledRule() {
         QueryWrapper<App> wrapper = Wrappers.query();
         wrapper.lambda().eq(App::getEnabled, EnabledEnum.ENABLE.getCode());
         List<App> apps = appMapper.selectList(wrapper);
@@ -47,8 +47,8 @@ public class RuleServiceImpl implements RuleService {
         query.lambda().in(RouteRule::getAppId, appIds)
                 .eq(RouteRule::getEnabled, EnabledEnum.ENABLE.getCode());
         List<RouteRule> routeRules = ruleMapper.selectList(query);
-        List<AppRuleVO> appRuleVOS = AppRuleVOTransfer.INSTANCE.mapToVOList(routeRules);
-        appRuleVOS.forEach(r -> r.setAppName(nameMap.get(r.getAppId())));
-        return appRuleVOS;
+        List<AppRuleDTO> appRuleDTOS = AppRuleVOTransfer.INSTANCE.mapToVOList(routeRules);
+        appRuleDTOS.forEach(r -> r.setAppName(nameMap.get(r.getAppId())));
+        return appRuleDTOS;
     }
 }

@@ -1,6 +1,6 @@
 package cn.sp.service;
 
-import cn.sp.pojo.vo.AppRuleVO;
+import cn.sp.pojo.dto.AppRuleDTO;
 
 import java.util.List;
 
@@ -11,5 +11,5 @@ import java.util.List;
  */
 public interface RuleService {
 
-    List<AppRuleVO> getEnabledRule();
+    List<AppRuleDTO> getEnabledRule();
 }

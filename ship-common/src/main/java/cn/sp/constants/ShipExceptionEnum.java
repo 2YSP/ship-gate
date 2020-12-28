@@ -11,7 +11,11 @@ public enum ShipExceptionEnum {
     /**
      * service not find
      */
-    SERVICE_NOT_FIND(1001,"service not find,maybe not register");
+    SERVICE_NOT_FIND(1001,"service not find,maybe not register"),
+    /**
+     * invalid config
+     */
+    CONFIG_ERROR(1002,"invalid config");
 
     private Integer code;
 

@@ -1,11 +1,13 @@
-package cn.sp.pojo.vo;
+package cn.sp.pojo.dto;
 
 /**
  * @Author: Ship
  * @Description:
  * @Date: Created in 2020/12/28
  */
-public class AppRuleVO {
+public class AppRuleDTO {
+
+    private Integer id;
 
     private Integer appId;
 
@@ -22,6 +24,14 @@ public class AppRuleVO {
     private String matchRule;
 
     private Integer priority;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getAppId() {
         return appId;
