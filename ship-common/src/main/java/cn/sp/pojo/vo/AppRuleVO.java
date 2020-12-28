@@ -1,23 +1,15 @@
-package cn.sp.bean;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.time.LocalDateTime;
+package cn.sp.pojo.vo;
 
 /**
  * @Author: Ship
  * @Description:
- * @Date: Created in 2020/12/25
+ * @Date: Created in 2020/12/28
  */
-@TableName("t_route_rule")
-public class RouteRule {
-
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+public class AppRuleVO {
 
     private Integer appId;
+
+    private String appName;
 
     private String version;
 
@@ -29,27 +21,7 @@ public class RouteRule {
 
     private String matchRule;
 
-    private Byte enabled;
-
-    private LocalDateTime createdTime;
-
     private Integer priority;
-
-    public Integer getPriority() {
-        return priority;
-    }
-
-    public void setPriority(Integer priority) {
-        this.priority = priority;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getAppId() {
         return appId;
@@ -57,6 +29,14 @@ public class RouteRule {
 
     public void setAppId(Integer appId) {
         this.appId = appId;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     public String getVersion() {
@@ -99,19 +79,11 @@ public class RouteRule {
         this.matchRule = matchRule;
     }
 
-    public Byte getEnabled() {
-        return enabled;
+    public Integer getPriority() {
+        return priority;
     }
 
-    public void setEnabled(Byte enabled) {
-        this.enabled = enabled;
-    }
-
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 }
