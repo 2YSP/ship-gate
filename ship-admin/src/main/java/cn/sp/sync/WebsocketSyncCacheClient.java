@@ -4,7 +4,6 @@ import cn.sp.constants.OperationTypeEnum;
 import cn.sp.constants.ShipExceptionEnum;
 import cn.sp.exception.ShipException;
 import cn.sp.pojo.dto.AppRuleDTO;
-import cn.sp.pojo.dto.AppRuleListDTO;
 import cn.sp.pojo.dto.RouteRuleOperationDTO;
 import cn.sp.service.RuleService;
 import cn.sp.utils.ShipThreadFactory;
@@ -30,9 +29,9 @@ import java.util.concurrent.TimeUnit;
  * @Date: Created in 2020/12/28
  */
 @Component
-public class WebsocketSyncCacheHandler {
+public class WebsocketSyncCacheClient {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(WebsocketSyncCacheHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(WebsocketSyncCacheClient.class);
 
     private WebSocketClient client;
 
@@ -40,8 +39,8 @@ public class WebsocketSyncCacheHandler {
 
     private Gson gson = new GsonBuilder().create();
 
-    public WebsocketSyncCacheHandler(@Value("${ship.server-web-socket-url}") String serverWebSocketUrl,
-                                     RuleService ruleService) {
+    public WebsocketSyncCacheClient(@Value("${ship.server-web-socket-url}") String serverWebSocketUrl,
+                                    RuleService ruleService) {
         if (StringUtils.isEmpty(serverWebSocketUrl)) {
             throw new ShipException(ShipExceptionEnum.CONFIG_ERROR);
         }

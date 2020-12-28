@@ -3,7 +3,6 @@ package cn.sp.sync;
 import cn.sp.cache.RouteRuleCache;
 import cn.sp.constants.OperationTypeEnum;
 import cn.sp.pojo.dto.AppRuleDTO;
-import cn.sp.pojo.dto.AppRuleListDTO;
 import cn.sp.pojo.dto.RouteRuleOperationDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
