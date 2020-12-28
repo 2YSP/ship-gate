@@ -35,6 +35,12 @@
             <groupId>cn.sp</groupId>
             <artifactId>ship-common</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.java-websocket</groupId>
+                    <artifactId>Java-WebSocket</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

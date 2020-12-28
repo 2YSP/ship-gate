@@ -9,4 +9,5 @@ ship:
   gate:
     load-balance: round
     time-out-millis: 3000
-    data-refresh-interval: 10
+    cache-refresh-interval: 10
+    web-socket-port: 9999

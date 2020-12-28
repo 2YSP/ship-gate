@@ -3,6 +3,7 @@ package cn.sp.utils;
 import cn.sp.constants.MatchMethodEnum;
 import cn.sp.exception.ShipException;
 
+import java.io.UnsupportedEncodingException;
 import java.util.regex.Pattern;
 
 /**
@@ -11,6 +12,8 @@ import java.util.regex.Pattern;
  * @Date: Created in 2020/12/28
  */
 public class StringTools {
+
+    public static final String CHARSET_UTF8 = "UTF-8";
 
     /**
      * @param value
@@ -29,6 +32,15 @@ public class StringTools {
         } else {
             throw new ShipException("invalid matchMethod");
         }
+    }
+
+    public static String byteToStr(byte[] data) {
+        try {
+            return new String(data, CHARSET_UTF8);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

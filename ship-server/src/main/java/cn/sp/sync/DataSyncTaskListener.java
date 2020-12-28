@@ -4,12 +4,12 @@ import cn.sp.cache.ServiceCache;
 import cn.sp.config.ServerConfigProperties;
 import cn.sp.constants.NacosConstants;
 import cn.sp.pojo.dto.ServiceInstance;
+import cn.sp.utils.ShipThreadFactory;
 import com.alibaba.nacos.api.annotation.NacosInjected;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.api.naming.pojo.ListView;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
@@ -32,16 +32,18 @@ import java.util.concurrent.TimeUnit;
 public class DataSyncTaskListener implements ApplicationListener<ContextRefreshedEvent> {
 
     private static ScheduledThreadPoolExecutor scheduledPool = new ScheduledThreadPoolExecutor(1,
-            new ThreadFactoryBuilder().setNameFormat("service-sync-%d").build());
+            new ShipThreadFactory("service-sync", true).create());
 
     private static ScheduledThreadPoolExecutor rulePool = new ScheduledThreadPoolExecutor(1,
-            new ThreadFactoryBuilder().setNameFormat("route-rule-sync-%d").build());
+            new ShipThreadFactory("route-rule-sync", true).create());
 
     @NacosInjected
     private NamingService namingService;
 
     @Autowired
     private ServerConfigProperties properties;
+
+    private WebsocketSyncCacheServer websocketSyncCacheServer;
 
 
     @Override
@@ -50,7 +52,9 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
             return;
         }
         scheduledPool.scheduleWithFixedDelay(new DataSyncTask(namingService)
-                , 0L, properties.getDataRefreshInterval(), TimeUnit.SECONDS);
+                , 0L, properties.getCacheRefreshInterval(), TimeUnit.SECONDS);
+        this.websocketSyncCacheServer = new WebsocketSyncCacheServer(properties.getWebSocketPort());
+        websocketSyncCacheServer.start();
     }
 
 
