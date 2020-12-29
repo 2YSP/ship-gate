@@ -29,7 +29,9 @@ CREATE TABLE `t_app` (
   `enabled` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否开启，1开启0未开启',
   `created_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `t_app` */
 
 /*Table structure for table `t_app_instance` */
 
@@ -44,7 +46,9 @@ CREATE TABLE `t_app_instance` (
   `weight` int(11) NOT NULL DEFAULT '0' COMMENT '权重',
   `created_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `t_app_instance` */
 
 /*Table structure for table `t_app_plugin` */
 
@@ -58,6 +62,8 @@ CREATE TABLE `t_app_plugin` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+/*Data for the table `t_app_plugin` */
+
 /*Table structure for table `t_plugin` */
 
 DROP TABLE IF EXISTS `t_plugin`;
@@ -69,7 +75,11 @@ CREATE TABLE `t_plugin` (
   `description` varchar(50) NOT NULL DEFAULT '' COMMENT '描述',
   `created_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `t_plugin` */
+
+insert  into `t_plugin`(`id`,`name`,`code`,`description`,`created_time`) values (1,'动态路由','DynamicRoute','动态路由插件','2020-12-29 09:48:20');
 
 /*Table structure for table `t_route_rule` */
 
@@ -83,10 +93,13 @@ CREATE TABLE `t_route_rule` (
   `match_key` varchar(50) NOT NULL DEFAULT '' COMMENT '匹配key',
   `match_method` tinyint(1) NOT NULL DEFAULT '0' COMMENT '匹配方式,1:=,2:regex,3:like',
   `match_rule` varchar(50) NOT NULL DEFAULT '' COMMENT '匹配规则',
+  `priority` int(11) NOT NULL DEFAULT '0' COMMENT '优先级，值越大优先级越高',
   `enabled` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否启用，1=开启0=禁用',
   `created_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `t_route_rule` */
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
