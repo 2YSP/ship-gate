@@ -89,10 +89,10 @@ public class WebsocketSyncCacheClient {
         }
     }
 
-    public void send(String content) {
+    public <T> void send(T t) {
         while (!client.getReadyState().equals(ReadyState.OPEN)) {
             LOGGER.debug("connecting ...please wait");
         }
-        client.send(content);
+        client.send(gson.toJson(t));
     }
 }

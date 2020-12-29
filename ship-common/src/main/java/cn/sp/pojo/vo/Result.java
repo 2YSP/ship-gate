@@ -34,6 +34,18 @@ public class Result<T> implements Serializable {
     }
 
     /**
+     * return the success result without data
+     * @param <T>
+     * @return
+     */
+    public static <T> Result<T> success() {
+        Result<T> result = new Result();
+        result.setCode(200);
+        result.setMessage("success");
+        return result;
+    }
+
+    /**
      * return the fail result
      *
      * @param <T>
