@@ -62,14 +62,26 @@ public class AppServiceImpl implements AppService {
         } else {
             appId = app.getId();
         }
-        AppInstance appInstance = new AppInstance();
-        appInstance.setAppId(appId);
-        appInstance.setIp(registerAppDTO.getIp());
-        appInstance.setPort(registerAppDTO.getPort());
-        appInstance.setVersion(registerAppDTO.getVersion());
-        appInstance.setCreatedTime(LocalDateTime.now());
-        instanceMapper.insert(appInstance);
+        AppInstance instance = query(appId, registerAppDTO.getIp(), registerAppDTO.getPort(), registerAppDTO.getVersion());
+        if (instance == null) {
+            AppInstance appInstance = new AppInstance();
+            appInstance.setAppId(appId);
+            appInstance.setIp(registerAppDTO.getIp());
+            appInstance.setPort(registerAppDTO.getPort());
+            appInstance.setVersion(registerAppDTO.getVersion());
+            appInstance.setCreatedTime(LocalDateTime.now());
+            instanceMapper.insert(appInstance);
+        }
         LOGGER.info("register app success,dto:[{}]", gson.toJson(registerAppDTO));
+    }
+
+    private AppInstance query(Integer appId, String ip, Integer port, String version) {
+        QueryWrapper<AppInstance> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(AppInstance::getAppId, appId)
+                .eq(AppInstance::getVersion, version)
+                .eq(AppInstance::getIp, ip)
+                .eq(AppInstance::getPort, port);
+        return instanceMapper.selectOne(wrapper);
     }
 
     private Integer addApp(RegisterAppDTO registerAppDTO) {
@@ -84,6 +96,7 @@ public class AppServiceImpl implements AppService {
 
     /**
      * bind app with all plugins
+     *
      * @param app
      */
     private void bindPlugins(App app) {

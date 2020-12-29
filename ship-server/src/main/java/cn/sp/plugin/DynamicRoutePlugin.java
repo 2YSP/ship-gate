@@ -133,9 +133,13 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
     }
 
     private String buildUrl(ServerWebExchange exchange, ServiceInstance serviceInstance) {
-        String path = exchange.getRequest().getPath().value().
-                replaceFirst("/" + serviceInstance.getAppName(), "");
+        ServerHttpRequest request = exchange.getRequest();
+        String query = request.getURI().getQuery();
+        String path = request.getPath().value().replaceFirst("/" + serviceInstance.getAppName(), "");
         String url = "http://" + serviceInstance.getIp() + ":" + serviceInstance.getPort() + path;
+        if (!StringUtils.isEmpty(query)) {
+            url = url + "?" + query;
+        }
         return url;
     }
 
@@ -159,7 +163,7 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
             throw new ShipException(ShipExceptionEnum.SERVICE_NOT_FIND);
         }
         String version = matchAppVersion(appName, request);
-        if (StringUtils.isEmpty(version)){
+        if (StringUtils.isEmpty(version)) {
             throw new ShipException("match app version error");
         }
         // filter serviceInstances by version
