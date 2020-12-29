@@ -80,6 +80,7 @@ CREATE TABLE `t_plugin` (
 /*Data for the table `t_plugin` */
 
 insert  into `t_plugin`(`id`,`name`,`code`,`description`,`created_time`) values (1,'动态路由','DynamicRoute','动态路由插件','2020-12-29 09:48:20');
+INSERT  INTO `t_plugin`(`id`,`name`,`code`,`description`,`created_time`) VALUES (2,'鉴权','Auth','鉴权插件','2020-12-29 09:48:20');
 
 /*Table structure for table `t_route_rule` */
 

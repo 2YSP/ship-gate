@@ -16,12 +16,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -118,25 +118,12 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
         metadataMap.put("version", properties.getVersion());
         metadataMap.put("appName", properties.getAppName());
         instance.setMetadata(metadataMap);
-//        List<String> serviceNames = getAllServiceName();
-//        for (String serviceName : serviceNames) {
-//            pool.execute(() -> {
-//                try {
-//                    // serviceName = url:version
-//                    namingService.registerInstance(serviceName, properties.getAppName(), instance);
-//                } catch (NacosException e) {
-//                    LOGGER.error("register to nacos fail", e);
-//                    throw new ShipException("register to nacos fail");
-//                }
-//            });
-//        }
         try {
             namingService.registerInstance(properties.getAppName(), NacosConstants.APP_GROUP_NAME, instance);
         } catch (NacosException e) {
             LOGGER.error("register to nacos fail", e);
             throw new ShipException(e.getErrCode(), e.getErrMsg());
         }
-        // todo check register result
         LOGGER.info("register interface info to nacos success!");
         // send register request to ship-admin
         String url = "http://" + properties.getAdminUrl() + AdminConstants.REGISTER_PATH;
@@ -155,31 +142,4 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
         registerAppDTO.setVersion(properties.getVersion());
         return registerAppDTO;
     }
-
-    /**
-     * get all http interface service list
-     *
-     * @return
-     */
-    private List<String> getAllServiceName() {
-        List<String> serviceNames = new ArrayList<>();
-        Map<RequestMappingInfo, HandlerMethod> handlerMethods = handlerMapping.getHandlerMethods();
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
-            RequestMappingInfo mappingInfo = entry.getKey();
-            HandlerMethod method = entry.getValue();
-            PatternsRequestCondition patternsCondition = mappingInfo.getPatternsCondition();
-            serviceNames.addAll(patternsCondition.getPatterns());
-        }
-        List<String> result = new ArrayList<>();
-        // replace / to .
-        for (String serviceName : serviceNames) {
-            if (ignoreUrlList.contains(serviceName)) {
-                continue;
-            }
-            String url = properties.getContextPath() + serviceName;
-            result.add(url.replace("/", ".") + ":" + properties.getVersion());
-        }
-        return result;
-    }
-
 }

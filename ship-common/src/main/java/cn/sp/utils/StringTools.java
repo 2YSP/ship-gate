@@ -4,6 +4,9 @@ import cn.sp.constants.MatchMethodEnum;
 import cn.sp.exception.ShipException;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -14,6 +17,10 @@ import java.util.regex.Pattern;
 public class StringTools {
 
     public static final String CHARSET_UTF8 = "UTF-8";
+    /**
+     * key: regex
+     */
+    private static final Map<String, Pattern> PATTERN_MAP = new HashMap<>();
 
     /**
      * @param value
@@ -25,8 +32,10 @@ public class StringTools {
         if (MatchMethodEnum.EQUAL.getCode().equals(matchMethod)) {
             return value.equals(matchRule);
         } else if (MatchMethodEnum.REGEX.getCode().equals(matchMethod)) {
-            // todo 将 Pattern 缓存下来，避免反复编译Pattern
-            return Pattern.matches(matchRule, value);
+            // 将 Pattern 缓存下来，避免反复编译Pattern
+            Pattern p = PATTERN_MAP.computeIfAbsent(matchRule, k -> Pattern.compile(k));
+            Matcher m = p.matcher(value);
+            return m.matches();
         } else if (MatchMethodEnum.LIKE.getCode().equals(matchMethod)) {
             return value.indexOf(matchRule) != -1;
         } else {

@@ -2,37 +2,34 @@ package cn.sp.plugin;
 
 import cn.sp.chain.PluginChain;
 import cn.sp.config.ServerConfigProperties;
+import cn.sp.constants.ShipPluginEnum;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
  * @Author: Ship
  * @Description:
- * @Date: Created in 2020/12/25
+ * @Date: Created in 2020/12/29
  */
-public class TestPlugin extends AbstractShipPlugin {
+public class AuthPlugin extends AbstractShipPlugin {
 
-
-    public TestPlugin(ServerConfigProperties properties) {
+    public AuthPlugin(ServerConfigProperties properties) {
         super(properties);
     }
 
     @Override
     public Integer order() {
-        return 2;
+        return ShipPluginEnum.AUTH.getOrder();
     }
 
     @Override
     public String name() {
-        return null;
+        return ShipPluginEnum.AUTH.getName();
     }
 
     @Override
     public Mono<Void> execute(ServerWebExchange exchange, PluginChain pluginChain) {
-        System.out.println("I am test");
-        return exchange.getResponse().writeWith(Mono.just(exchange.getResponse().bufferFactory().wrap("hello world".getBytes())));
-//        return pluginChain.execute(exchange, pluginChain);
+        System.out.println("auth plugin");
+        return pluginChain.execute(exchange, pluginChain);
     }
-
-
 }
