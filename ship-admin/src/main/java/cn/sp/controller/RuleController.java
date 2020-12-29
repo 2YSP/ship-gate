@@ -1,6 +1,5 @@
 package cn.sp.controller;
 
-import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.pojo.vo.AppRuleListVO;
 import cn.sp.pojo.vo.Result;
 import cn.sp.service.RuleService;
