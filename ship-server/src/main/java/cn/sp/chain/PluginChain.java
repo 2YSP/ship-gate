@@ -1,5 +1,6 @@
 package cn.sp.chain;
 
+import cn.sp.cache.PluginCache;
 import cn.sp.config.ServerConfigProperties;
 import cn.sp.plugin.AbstractShipPlugin;
 import cn.sp.plugin.ShipPlugin;
@@ -16,11 +17,6 @@ import java.util.List;
  * @Date: Created in 2020/12/25
  */
 public class PluginChain extends AbstractShipPlugin {
-
-    public PluginChain(ServerConfigProperties properties) {
-        super(properties);
-    }
-
     /**
      * the pos point to current plugin
      */
@@ -30,9 +26,24 @@ public class PluginChain extends AbstractShipPlugin {
      */
     private List<ShipPlugin> plugins;
 
+    private final String appName;
+
+    public PluginChain(ServerConfigProperties properties, String appName) {
+        super(properties);
+        this.appName = appName;
+    }
+
+    /**
+     * add enabled plugin to chain
+     *
+     * @param shipPlugin
+     */
     public void addPlugin(ShipPlugin shipPlugin) {
         if (plugins == null) {
             plugins = new ArrayList<>();
+        }
+        if (!PluginCache.isEnabled(appName, shipPlugin.name())) {
+            return;
         }
         plugins.add(shipPlugin);
         // order by the plugin's order
@@ -56,4 +67,9 @@ public class PluginChain extends AbstractShipPlugin {
         }
         return pluginChain.plugins.get(pos++).execute(exchange, pluginChain);
     }
+
+    public String getAppName() {
+        return appName;
+    }
+
 }

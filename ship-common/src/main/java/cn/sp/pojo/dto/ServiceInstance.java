@@ -1,5 +1,6 @@
 package cn.sp.pojo.dto;
 
+
 /**
  * @Author: Ship
  * @Description:
@@ -15,6 +16,15 @@ public class ServiceInstance {
 
     private String version;
 
+    private Integer weight;
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
 
     public String getAppName() {
         return appName;

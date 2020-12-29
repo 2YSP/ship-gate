@@ -1,8 +1,10 @@
 package cn.sp.sync;
 
+import cn.sp.cache.PluginCache;
 import cn.sp.cache.ServiceCache;
 import cn.sp.config.ServerConfigProperties;
 import cn.sp.constants.NacosConstants;
+import cn.sp.constants.ShipPluginEnum;
 import cn.sp.pojo.dto.ServiceInstance;
 import cn.sp.utils.ShipThreadFactory;
 import com.alibaba.nacos.api.annotation.NacosInjected;
@@ -16,11 +18,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 /**
@@ -76,11 +80,23 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
                         continue;
                     }
                     ServiceCache.add(appName, buildServiceInstances(instanceList));
+                    List<String> pluginNames = getEnabledPlugins(instanceList);
+                    PluginCache.add(appName, pluginNames);
                 }
                 ServiceCache.removeExpired(appNames);
+                PluginCache.removeExpired(appNames);
+
             } catch (NacosException e) {
                 e.printStackTrace();
             }
+        }
+
+        private List<String> getEnabledPlugins(List<Instance> instanceList) {
+            Instance instance = instanceList.get(0);
+            Map<String, String> metadata = instance.getMetadata();
+            // plugins: DynamicRoute,Auth
+            String plugins = metadata.getOrDefault("plugins", ShipPluginEnum.DYNAMIC_ROUTE.getName());
+            return Arrays.stream(plugins.split(",")).collect(Collectors.toList());
         }
 
         private List<ServiceInstance> buildServiceInstances(List<Instance> instanceList) {
@@ -92,6 +108,7 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
                 serviceInstance.setIp(instance.getIp());
                 serviceInstance.setPort(instance.getPort());
                 serviceInstance.setVersion(metadata.get("version"));
+                serviceInstance.setWeight((int) instance.getWeight());
                 list.add(serviceInstance);
             });
             return list;

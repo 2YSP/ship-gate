@@ -67,10 +67,7 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
 
     @Override
     public Mono<Void> execute(ServerWebExchange exchange, PluginChain pluginChain) {
-        String appName = parseAppName(exchange);
-        if (CollectionUtils.isEmpty(ServiceCache.getAllInstances(appName))) {
-            throw new ShipException(ShipExceptionEnum.SERVICE_NOT_FIND);
-        }
+        String appName = pluginChain.getAppName();
         ServiceInstance serviceInstance = chooseInstance(appName, exchange.getRequest());
         LOGGER.info("selected instance is [{}]", gson.toJson(serviceInstance));
         // request service
@@ -143,11 +140,7 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
         return url;
     }
 
-    private String parseAppName(ServerWebExchange exchange) {
-        RequestPath path = exchange.getRequest().getPath();
-        String appName = path.value().split("/")[1];
-        return appName;
-    }
+
 
     /**
      * choose an ServiceInstance according to route rule config and load balancing algorithm
