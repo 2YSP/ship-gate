@@ -34,7 +34,6 @@ public class PluginFilter implements WebFilter {
             throw new ShipException(ShipExceptionEnum.SERVICE_NOT_FIND);
         }
         PluginChain pluginChain = new PluginChain(properties, appName);
-        // todo get enabled plugin by app config
         pluginChain.addPlugin(new DynamicRoutePlugin(properties));
         pluginChain.addPlugin(new AuthPlugin(properties));
         return pluginChain.execute(exchange, pluginChain);

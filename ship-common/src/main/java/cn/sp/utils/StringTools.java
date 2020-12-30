@@ -4,6 +4,7 @@ import cn.sp.constants.MatchMethodEnum;
 import cn.sp.exception.ShipException;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -46,6 +47,15 @@ public class StringTools {
     public static String byteToStr(byte[] data) {
         try {
             return new String(data, CHARSET_UTF8);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String urlEncode(String value) {
+        try {
+            return URLEncoder.encode(value, CHARSET_UTF8);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

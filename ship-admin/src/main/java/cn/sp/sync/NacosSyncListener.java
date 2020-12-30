@@ -7,6 +7,7 @@ import cn.sp.pojo.dto.ServiceInstance;
 import cn.sp.service.AppService;
 import cn.sp.utils.OkhttpTool;
 import cn.sp.utils.ShipThreadFactory;
+import cn.sp.utils.StringTools;
 import com.alibaba.nacos.api.annotation.NacosInjected;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.ListView;
@@ -94,7 +95,7 @@ public class NacosSyncListener implements ApplicationListener<ContextRefreshedEv
                     for (ServiceInstance instance : appInfo.getInstances()) {
                         Map<String, Object> queryMap = buildQueryMap(appInfo, instance);
                         String resp = OkhttpTool.doPut(url, queryMap, "");
-                        LOGGER.info("response :{}", resp);
+                        LOGGER.debug("response :{}", resp);
                     }
                 }
 
@@ -114,7 +115,7 @@ public class NacosSyncListener implements ApplicationListener<ContextRefreshedEv
             metadata.setAppName(appInfo.getAppName());
             metadata.setVersion(instance.getVersion());
             metadata.setPlugins(String.join(",", appInfo.getEnabledPlugins()));
-            map.put("metadata", gson.toJson(metadata));
+            map.put("metadata", StringTools.urlEncode(gson.toJson(metadata)));
             map.put("ephemeral", true);
             return map;
         }
