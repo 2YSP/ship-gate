@@ -17,4 +17,4 @@ nacos:
     server-addr: 127.0.0.1:8848
 
 mybatis-plus:
-  mapper-locations: classpath:/cn/sp/mapper
+  mapper-locations: classpath:/mapper/*.xml

@@ -149,6 +149,10 @@ public class AppServiceImpl implements AppService {
         wrapper.lambda().in(AppInstance::getAppId, appIds);
         List<AppInstance> appInstances = instanceMapper.selectList(wrapper);
         List<AppPluginDTO> appPluginDTOS = appPluginMapper.queryEnabledPlugins(appIds);
+        if (CollectionUtils.isEmpty(appInstances) || CollectionUtils.isEmpty(appPluginDTOS)) {
+            LOGGER.info("no app infos....");
+            return Lists.newArrayList();
+        }
         return buildAppInfos(apps, appInstances, appPluginDTOS);
     }
 

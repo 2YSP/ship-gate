@@ -74,6 +74,7 @@ public class OkhttpTool {
             sb.append("?");
             for (Map.Entry<String, Object> entry : queryParamMap.entrySet()) {
                 sb.append(entry.getKey() + "=" + entry.getValue());
+                sb.append("&");
             }
             requestUrl = sb.toString();
         }

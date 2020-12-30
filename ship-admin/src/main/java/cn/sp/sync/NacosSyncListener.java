@@ -8,7 +8,6 @@ import cn.sp.service.AppService;
 import cn.sp.utils.OkhttpTool;
 import cn.sp.utils.ShipThreadFactory;
 import com.alibaba.nacos.api.annotation.NacosInjected;
-import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.ListView;
 import com.google.gson.Gson;
@@ -95,10 +94,11 @@ public class NacosSyncListener implements ApplicationListener<ContextRefreshedEv
                     for (ServiceInstance instance : appInfo.getInstances()) {
                         Map<String, Object> queryMap = buildQueryMap(appInfo, instance);
                         String resp = OkhttpTool.doPut(url, queryMap, "");
+                        LOGGER.info("response :{}", resp);
                     }
                 }
 
-            } catch (NacosException e) {
+            } catch (Exception e) {
                 LOGGER.error("nacos sync task error", e);
             }
         }
