@@ -1,2 +1,3 @@
 cn.sp.spi.balance.RandomBalance
 cn.sp.spi.balance.FullRoundBalance
+cn.sp.spi.balance.WeightRoundBalance
