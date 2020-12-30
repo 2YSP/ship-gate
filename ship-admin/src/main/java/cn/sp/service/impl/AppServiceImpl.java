@@ -8,12 +8,17 @@ import cn.sp.constants.EnabledEnum;
 import cn.sp.exception.ShipException;
 import cn.sp.mapper.AppPluginMapper;
 import cn.sp.mapper.PluginMapper;
+import cn.sp.pojo.AppPluginDTO;
+import cn.sp.pojo.dto.AppInfoDTO;
 import cn.sp.pojo.dto.RegisterAppDTO;
 import cn.sp.mapper.AppInstanceMapper;
 import cn.sp.mapper.AppMapper;
+import cn.sp.pojo.dto.ServiceInstance;
 import cn.sp.pojo.dto.UnregisterAppDTO;
 import cn.sp.service.AppService;
+import cn.sp.transfer.AppInstanceTransfer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
@@ -26,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author: Ship
@@ -133,5 +139,40 @@ public class AppServiceImpl implements AppService {
         wrapper.lambda().eq(App::getAppName, appName);
         App app = appMapper.selectOne(wrapper);
         return app;
+    }
+
+    @Override
+    public List<AppInfoDTO> getAppInfos(List<String> appNames) {
+        List<App> apps = getAppList(appNames);
+        List<Integer> appIds = apps.stream().map(App::getId).collect(Collectors.toList());
+        QueryWrapper<AppInstance> wrapper = new QueryWrapper<>();
+        wrapper.lambda().in(AppInstance::getAppId, appIds);
+        List<AppInstance> appInstances = instanceMapper.selectList(wrapper);
+        List<AppPluginDTO> appPluginDTOS = appPluginMapper.queryEnabledPlugins(appIds);
+        return buildAppInfos(apps, appInstances, appPluginDTOS);
+    }
+
+    private List<AppInfoDTO> buildAppInfos(List<App> apps, List<AppInstance> appInstances, List<AppPluginDTO> appPluginDTOS) {
+        List<AppInfoDTO> list = Lists.newArrayList();
+        apps.forEach(app -> {
+            AppInfoDTO appInfoDTO = new AppInfoDTO();
+            appInfoDTO.setAppId(app.getId());
+            appInfoDTO.setAppName(app.getAppName());
+            List<String> enabledPlugins = appPluginDTOS.stream().filter(r -> r.getAppId().equals(app.getId()))
+                    .map(AppPluginDTO::getCode)
+                    .collect(Collectors.toList());
+            appInfoDTO.setEnabledPlugins(enabledPlugins);
+            List<AppInstance> instances = appInstances.stream().filter(r -> r.getAppId().equals(app.getId())).collect(Collectors.toList());
+            List<ServiceInstance> serviceList = AppInstanceTransfer.INSTANCE.mapToServiceList(instances);
+            appInfoDTO.setInstances(serviceList);
+            list.add(appInfoDTO);
+        });
+        return list;
+    }
+
+    private List<App> getAppList(List<String> appNames) {
+        QueryWrapper<App> wrapper = new QueryWrapper<>();
+        wrapper.lambda().in(App::getAppName, appNames);
+        return appMapper.selectList(wrapper);
     }
 }

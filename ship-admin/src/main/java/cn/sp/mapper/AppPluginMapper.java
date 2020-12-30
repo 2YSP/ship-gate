@@ -1,7 +1,11 @@
 package cn.sp.mapper;
 
 import cn.sp.bean.AppPlugin;
+import cn.sp.pojo.AppPluginDTO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @Author: Ship
@@ -10,4 +14,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface AppPluginMapper extends BaseMapper<AppPlugin> {
 
+    List<AppPluginDTO> queryEnabledPlugins(@Param("appIds") List<Integer> appIds);
 }

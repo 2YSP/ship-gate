@@ -101,7 +101,7 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
         unregisterAppDTO.setIp(IpUtil.getLocalIpAddress());
         unregisterAppDTO.setPort(properties.getPort());
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            OkhttpTool.post(url, unregisterAppDTO);
+            OkhttpTool.doPost(url, unregisterAppDTO);
             LOGGER.info("[{}:{}] unregister from ship-admin success!", unregisterAppDTO.getAppName(), unregisterAppDTO.getVersion());
         }));
     }
@@ -128,7 +128,7 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
         // send register request to ship-admin
         String url = "http://" + properties.getAdminUrl() + AdminConstants.REGISTER_PATH;
         RegisterAppDTO registerAppDTO = buildRegisterAppDTO(instance);
-        OkhttpTool.post(url, registerAppDTO);
+        OkhttpTool.doPost(url, registerAppDTO);
         LOGGER.info("register to ship-admin success!");
     }
 

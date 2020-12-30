@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.sp.mapper.AppPluginMapper">
+
+    <select id="queryEnabledPlugins" resultType="cn.sp.pojo.AppPluginDTO">
+        SELECT
+        a.`id` AS appId,
+        a.`app_name` AS appName,
+        p.`code`
+        FROM t_app_plugin ap LEFT JOIN t_app a ON ap.`app_id` = a.`id`
+        LEFT JOIN t_plugin p ON ap.`plugin_id` = p.`id`
+        WHERE ap.`enabled` = 1 AND a.`id` IN
+        <foreach collection="appIds" separator="," open="(" close=")" item="appId">
+            #{appId}
+        </foreach>
+    </select>
+</mapper>
