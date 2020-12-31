@@ -18,9 +18,11 @@ public class FullRoundBalance implements LoadBalance {
 
     @Override
     public ServiceInstance chooseOne(List<ServiceInstance> instances) {
-        if (index == instances.size()){
-            index = 0;
+        synchronized (this) {
+            if (index == instances.size()) {
+                index = 0;
+            }
+            return instances.get(index++);
         }
-        return instances.get(index++);
     }
 }
