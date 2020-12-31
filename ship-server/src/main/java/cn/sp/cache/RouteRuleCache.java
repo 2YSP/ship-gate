@@ -2,13 +2,15 @@ package cn.sp.cache;
 
 import cn.sp.exception.ShipException;
 import cn.sp.pojo.dto.AppRuleDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -17,11 +19,13 @@ import java.util.stream.Collectors;
  * @Date: Created in 2020/12/27
  */
 public class RouteRuleCache {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(RouteRuleCache.class);
     /**
      * route rule config cache map
      * key: appName
      */
-    private static final Map<String, List<AppRuleDTO>> ROUTE_RULE_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, CopyOnWriteArrayList<AppRuleDTO>> ROUTE_RULE_MAP = new ConcurrentHashMap<>();
 
     /**
      * add rule to cache map
@@ -29,7 +33,9 @@ public class RouteRuleCache {
      * @param map
      */
     public static void add(Map<String, List<AppRuleDTO>> map) {
-        ROUTE_RULE_MAP.putAll(map);
+        map.forEach((key, value) -> {
+            ROUTE_RULE_MAP.put(key, new CopyOnWriteArrayList(value));
+        });
     }
 
     /**
@@ -41,14 +47,14 @@ public class RouteRuleCache {
         for (Map.Entry<String, List<AppRuleDTO>> entry : map.entrySet()) {
             String appName = entry.getKey();
             List<Integer> ruleIds = entry.getValue().stream().map(AppRuleDTO::getId).collect(Collectors.toList());
-            List<AppRuleDTO> ruleDTOS = ROUTE_RULE_MAP.getOrDefault(appName, new ArrayList<>());
-            List<AppRuleDTO> leftRules = ruleDTOS.stream().filter(r -> !ruleIds.contains(r.getId())).collect(Collectors.toList());
-            if (CollectionUtils.isEmpty(leftRules)) {
+            CopyOnWriteArrayList<AppRuleDTO> ruleDTOS = ROUTE_RULE_MAP.getOrDefault(appName, new CopyOnWriteArrayList<>());
+            ruleDTOS.removeIf(r -> ruleIds.contains(r.getId()));
+            if (CollectionUtils.isEmpty(ruleDTOS)) {
                 // remove all
                 ROUTE_RULE_MAP.remove(appName);
             } else {
                 // remove some of them
-                ROUTE_RULE_MAP.put(appName, leftRules);
+                ROUTE_RULE_MAP.put(appName, ruleDTOS);
             }
         }
     }
