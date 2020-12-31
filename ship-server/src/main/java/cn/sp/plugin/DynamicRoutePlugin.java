@@ -10,18 +10,21 @@ import cn.sp.constants.MatchObjectEnum;
 import cn.sp.constants.ShipExceptionEnum;
 import cn.sp.constants.ShipPluginEnum;
 import cn.sp.exception.ShipException;
-import cn.sp.pojo.dto.ServiceInstance;
 import cn.sp.pojo.dto.AppRuleDTO;
+import cn.sp.pojo.dto.ServiceInstance;
 import cn.sp.spi.LoadBalance;
 import cn.sp.utils.StringTools;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.netty.channel.ChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.server.RequestPath;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.CollectionUtils;
@@ -30,6 +33,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
 import java.util.Comparator;
@@ -46,13 +50,24 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DynamicRoutePlugin.class);
 
-    private WebClient webClient;
+    private static WebClient webClient;
 
-    private Gson gson = new GsonBuilder().create();
+    private static final Gson gson = new GsonBuilder().create();
+
+    static {
+        HttpClient httpClient = HttpClient.create()
+                .tcpConfiguration(client ->
+                        client.doOnConnected(conn ->
+                                conn.addHandlerLast(new ReadTimeoutHandler(3))
+                                        .addHandlerLast(new WriteTimeoutHandler(3)))
+                                .option(ChannelOption.TCP_NODELAY, true)
+                );
+        webClient = WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient))
+                .build();
+    }
 
     public DynamicRoutePlugin(ServerConfigProperties properties) {
         super(properties);
-        webClient = WebClient.create();
     }
 
     @Override
@@ -69,7 +84,7 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
     public Mono<Void> execute(ServerWebExchange exchange, PluginChain pluginChain) {
         String appName = pluginChain.getAppName();
         ServiceInstance serviceInstance = chooseInstance(appName, exchange.getRequest());
-        LOGGER.info("selected instance is [{}]", gson.toJson(serviceInstance));
+//        LOGGER.info("selected instance is [{}]", gson.toJson(serviceInstance));
         // request service
         String url = buildUrl(exchange, serviceInstance);
         return forward(exchange, url);
@@ -139,7 +154,6 @@ public class DynamicRoutePlugin extends AbstractShipPlugin {
         }
         return url;
     }
-
 
 
     /**
