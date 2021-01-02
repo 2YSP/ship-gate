@@ -11,7 +11,8 @@ Now it only supports HTTP protocol forward,it is for learning communication only
 - Ship-admin: gateway management console,supports config route rule etc.
 - Ship-server: gateway server,core function module.
 - Ship-ship-client-spring-boot-starter: gateway client,automatically register service information to the registration center.
-- Ship-gate-example: an example of of how to use the gateway
+- Ship-gate-example: an example of how to use the gateway
+- Ship-common: some common codes,like pojo,constants,tools etc.
 
 # Features
 
