@@ -88,7 +88,7 @@ Finally start ship-sever and just have fun!
 
 # Architecture diagram
 
-![网关设计](/Users/ship/Desktop/其他/网关设计.png)
+![网关设计](http://wwww.2ysp.top/gateway.png)
 
 # Prerequisite
 
