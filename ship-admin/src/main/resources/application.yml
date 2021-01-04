@@ -8,6 +8,14 @@ spring:
     username: root
     password: 1234
     driver-class-name: com.mysql.jdbc.Driver
+  #Freemarker
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML5
+    servlet:
+      content-type: text/html
 
 ship:
   server-web-socket-url: ws://127.0.0.1:9999
@@ -19,3 +27,4 @@ nacos:
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
+
