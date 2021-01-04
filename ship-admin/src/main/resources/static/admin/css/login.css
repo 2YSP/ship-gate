@@ -17,7 +17,7 @@ input:-webkit-autofill {
 }
 /*页面背景色*/
 .m-login-bg {
-  background: url("../images/login/login_bg.png") left center repeat-x;
+  background: url("../images/login/loginback.jpg") left center repeat-x;
   height: 100%;
 }
 .m-login {
