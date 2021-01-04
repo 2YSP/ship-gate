@@ -102,6 +102,21 @@ CREATE TABLE `t_route_rule` (
 
 /*Data for the table `t_route_rule` */
 
+/*Table structure for table `t_user` */
+
+DROP TABLE IF EXISTS `t_user`;
+
+CREATE TABLE `t_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_name` varchar(32) NOT NULL DEFAULT '' COMMENT '用户名',
+  `password` char(32) NOT NULL DEFAULT '' COMMENT '密码',
+  `created_time` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `t_user` */
+
+insert  into `t_user`(`id`,`user_name`,`password`,`created_time`) values (1,'admin','6b249962c7fa2a4b2ba26474dd164c3c','2021-01-04 11:36:54');
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

@@ -11,5 +11,7 @@ public final class AdminConstants {
 
     public static final String UNREGISTER_PATH = "/app/unregister";
 
+    public static final String TOKEN_NAME = "token";
+
 
 }
