@@ -14,9 +14,9 @@
     <div class="m-login">
         <h3>网关后台登录</h3>
         <div class="m-login-warp">
-            <form class="layui-form">
+            <form class="layui-form" action="/user/login" method="post">
                 <div class="layui-form-item">
-                    <input type="text" name="title" required lay-verify="required" placeholder="用户名" autocomplete="off" class="layui-input">
+                    <input type="text" name="userName" required lay-verify="required" placeholder="用户名" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-form-item">
                     <input type="password" name="password" required lay-verify="required" placeholder="密码" autocomplete="off" class="layui-input">
@@ -42,16 +42,16 @@
 
 
         //自定义验证规则
-        form.verify({
-            title: function(value) {
-                if(value.length < 5) {
-                    return '标题至少得5个字符啊';
-                }
-            },
-            password: [/(.+){6,12}$/, '密码必须6到12位'],
-            verity: [/(.+){6}$/, '验证码必须是6位'],
-
-        });
+        // form.verify({
+        //     title: function(value) {
+        //         if(value.length < 5) {
+        //             return '标题至少得5个字符啊';
+        //         }
+        //     },
+        //     password: [/(.+){6,12}$/, '密码必须6到12位'],
+        //     verity: [/(.+){6}$/, '验证码必须是6位'],
+        //
+        // });
 
 
         //监听提交

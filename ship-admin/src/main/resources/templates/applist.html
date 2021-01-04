@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Ship Admin</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+    <span th:replace="common::header"></span>
+
+    <span th:replace="common::side"></span>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+
+        <div class="layui-card">
+            <div class="layui-card-header">
+            </div>
+            <div class="layui-card-body">
+
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="150">
+                        <col width="200">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>名称</th>
+                        <th>描述</th>
+                        <th>根路径</th>
+                        <th>节点</th>
+                        <th>状态</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="item,iterStat:${appVOList}">
+                        <td th:text="${iterStat.count}"></td>
+                        <td th:text="${item.appName}">order</td>
+                        <td th:text="${item.description}">订单服务</td>
+                        <td th:text="${item.contextPath}">/order</td>
+                        <td th:text="'['+${item.instanceNum}+']'">[2]</td>
+                        <td th:if="${item.enabled == 1}" style="color: green">开启</td>
+                        <td th:if="${item.enabled != 1}" style="color: red">禁用</td>
+                        <td th:text="${item.createdTime}">2020-12-26 10:00:00</td>
+                        <td>
+                            <button type="button" class="layui-btn ayui-btn-xs" th:if="${item.enabled != 1}">启用</button>
+                            <button type="button" class="layui-btn ayui-btn-xs layui-btn-warm" th:if="${item.enabled == 1}">禁用</button>
+                            <button type="button" class="layui-btn ayui-btn-xs layui-btn-danger">删除</button>
+                        </td>
+                    </tr>
+<!--                    <tr>-->
+<!--                        <td>2</td>-->
+<!--                        <td>order</td>-->
+<!--                        <td>订单服务</td>-->
+<!--                        <td>/order</td>-->
+<!--                        <td>[2]</td>-->
+<!--                        <td>开启</td>-->
+<!--                        <td>2020-12-26 10:00:00</td>-->
+<!--                        <td>-->
+<!--                            <button type="button" class="layui-btn ayui-btn-xs layui-btn-warm">禁用</button>-->
+<!--                            <button type="button" class="layui-btn ayui-btn-xs layui-btn-danger">删除</button>-->
+<!--                        </td>-->
+<!--                    </tr>-->
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © 2020-2021 - ship
+    </div>
+</div>
+<script src="../static/layui/layui.js"></script>
+<script>
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+</script>
+</body>
+</html>
+      
+

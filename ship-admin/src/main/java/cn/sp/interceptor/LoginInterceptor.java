@@ -3,6 +3,7 @@ package cn.sp.interceptor;
 import cn.sp.constants.AdminConstants;
 import cn.sp.constants.ShipExceptionEnum;
 import cn.sp.exception.ShipException;
+import cn.sp.pojo.PayLoad;
 import cn.sp.util.JwtUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -23,11 +24,11 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println(request.getRequestURI());
         String token = null;
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
-            throw new ShipException(ShipExceptionEnum.NOT_LOGIN);
+            response.sendRedirect("/user/login/page");
+            return false;
         }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(AdminConstants.TOKEN_NAME)) {
@@ -35,12 +36,15 @@ public class LoginInterceptor implements HandlerInterceptor {
             }
         }
         if (StringUtils.isEmpty(token)) {
-            throw new ShipException(ShipExceptionEnum.NOT_LOGIN);
+            response.sendRedirect("/user/login/page");
+            return false;
         }
         boolean result = JwtUtils.checkSignature(token);
         if (!result) {
             throw new ShipException(ShipExceptionEnum.TOKEN_ERROR);
         }
+        PayLoad payLoad = JwtUtils.getPayLoad(token);
+        request.setAttribute("currUser", payLoad.getName());
         return true;
     }
 }

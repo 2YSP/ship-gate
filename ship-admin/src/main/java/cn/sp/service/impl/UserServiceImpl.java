@@ -68,6 +68,7 @@ public class UserServiceImpl implements UserService {
             cookie.setHttpOnly(true);
             // 30min
             cookie.setMaxAge(30 * 60);
+            cookie.setPath("/");
             response.addCookie(cookie);
         } catch (Exception e) {
             LOGGER.error("login error", e);

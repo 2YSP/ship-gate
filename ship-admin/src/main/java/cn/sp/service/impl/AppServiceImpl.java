@@ -9,6 +9,7 @@ import cn.sp.exception.ShipException;
 import cn.sp.mapper.AppPluginMapper;
 import cn.sp.mapper.PluginMapper;
 import cn.sp.pojo.AppPluginDTO;
+import cn.sp.pojo.AppVO;
 import cn.sp.pojo.dto.AppInfoDTO;
 import cn.sp.pojo.dto.RegisterAppDTO;
 import cn.sp.mapper.AppInstanceMapper;
@@ -17,6 +18,7 @@ import cn.sp.pojo.dto.ServiceInstance;
 import cn.sp.pojo.dto.UnregisterAppDTO;
 import cn.sp.service.AppService;
 import cn.sp.transfer.AppInstanceTransfer;
+import cn.sp.transfer.AppVOTransfer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -178,5 +180,17 @@ public class AppServiceImpl implements AppService {
         QueryWrapper<App> wrapper = new QueryWrapper<>();
         wrapper.lambda().in(App::getAppName, appNames);
         return appMapper.selectList(wrapper);
+    }
+
+    @Override
+    public List<AppVO> getList() {
+        QueryWrapper<App> wrapper = new QueryWrapper<>();
+        List<App> apps = appMapper.selectList(wrapper);
+        if (CollectionUtils.isEmpty(apps)){
+            return Lists.newArrayList();
+        }
+        List<AppVO> appVOS = AppVOTransfer.INSTANCE.mapToVOList(apps);
+        appVOS.forEach(appVO -> appVO.setInstanceNum(2));
+        return appVOS;
     }
 }
