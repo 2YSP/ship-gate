@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -34,7 +35,8 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
 
-    public static final String SALT = "d5ec0a02";
+    @Value("${ship.user-password-salt}")
+    private String salt;
 
     @Override
     public void add(UserDTO userDTO) {
@@ -44,7 +46,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = new User();
         user.setUserName(userDTO.getUserName());
-        user.setPassword(StringTools.md5Digest(userDTO.getPassword(), SALT));
+        user.setPassword(StringTools.md5Digest(userDTO.getPassword(), salt));
         user.setCreatedTime(LocalDateTime.now());
         userMapper.insert(user);
     }
@@ -55,7 +57,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new ShipException(ShipExceptionEnum.LOGIN_ERROR);
         }
-        String pwd = StringTools.md5Digest(userDTO.getPassword(), SALT);
+        String pwd = StringTools.md5Digest(userDTO.getPassword(), salt);
         if (!pwd.equals(user.getPassword())) {
             throw new ShipException(ShipExceptionEnum.LOGIN_ERROR);
         }
