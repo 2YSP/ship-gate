@@ -18,6 +18,18 @@
 
         <div class="layui-card">
             <div class="layui-card-header">
+                <form class="layui-form" action="/rule/list">
+                    <div class="layui-form-item">
+                        <div class="layui-inline tool-btn">
+                            <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-url="article-add.html"><i class="layui-icon">&#xe654;</i></button>
+                        </div>
+                        <div class="layui-inline">
+                            <input type="text" name="appName" placeholder="请输入服务名称"
+                                   autocomplete="off" class="layui-input" th:value="${appName}">
+                        </div>
+                        <button class="layui-btn layui-btn-normal" lay-submit="search">搜索</button>
+                    </div>
+                </form>
             </div>
             <div class="layui-card-body">
 
@@ -31,9 +43,10 @@
                     <tr>
                         <th>序号</th>
                         <th>名称</th>
-                        <th>描述</th>
-                        <th>根路径</th>
-                        <th>节点</th>
+                        <th>服务名称</th>
+                        <th>路由版本</th>
+                        <th>匹配逻辑</th>
+                        <th>优先级</th>
                         <th>状态</th>
                         <th>创建时间</th>
                         <th>操作</th>
@@ -41,14 +54,14 @@
                     </thead>
                     <tbody>
 
-                    <tr th:each="item,iterStat:${appVOList}">
+                    <tr th:each="item,iterStat:${ruleVOS}">
                         <td th:text="${iterStat.count}"></td>
+                        <td th:text="${item.name}">默认</td>
                         <td th:text="${item.appName}">order</td>
-                        <td th:text="${item.description}">订单服务</td>
-                        <td th:text="${item.contextPath}">/order</td>
-                        <td>
-                            <a th:href="@{'/app/instance/list?appId='+${item.id}}" th:text="'['+${item.instanceNum}+']'"
-                               style="color: #248bf2">[2]</a>
+                        <td th:text="${item.version}">gray_1.0</td>
+                        <td th:text="${item.matchObject}">/order</td>
+                        <td th:text="${item.priority}">
+                            1
                         </td>
                         <td th:if="${item.enabled == 1}" style="color: green">开启</td>
                         <td th:if="${item.enabled != 1}" style="color: red">禁用</td>

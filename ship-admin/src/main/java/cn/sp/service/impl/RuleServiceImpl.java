@@ -10,20 +10,25 @@ import cn.sp.exception.ShipException;
 import cn.sp.mapper.AppMapper;
 import cn.sp.mapper.RouteRuleMapper;
 import cn.sp.pojo.dto.AppRuleDTO;
+import cn.sp.pojo.vo.RuleVO;
 import cn.sp.service.RuleService;
 import cn.sp.transfer.AppRuleVOTransfer;
+import cn.sp.transfer.RuleVOTransfer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -76,7 +81,7 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public void delete(Integer id) {
         RouteRule routeRule = ruleMapper.selectById(id);
-        if (routeRule == null){
+        if (routeRule == null) {
             throw new ShipException(ShipExceptionEnum.PARAM_ERROR);
         }
         AppRuleDTO appRuleDTO = new AppRuleDTO();
@@ -86,5 +91,41 @@ public class RuleServiceImpl implements RuleService {
 
         ruleMapper.deleteById(id);
         eventPublisher.publishEvent(new RuleDeleteEvent(this, appRuleDTO));
+    }
+
+    @Override
+    public List<RuleVO> queryList(String appName) {
+        Integer appId = null;
+        if (!StringUtils.isEmpty(appName)) {
+            App app = queryByAppName(appName);
+            if (app == null) {
+                return Lists.newArrayList();
+            }
+            appId = app.getId();
+        }
+        QueryWrapper<RouteRule> query = Wrappers.query();
+        query.lambda().eq(Objects.nonNull(appId), RouteRule::getAppId, appId);
+        List<RouteRule> rules = ruleMapper.selectList(query);
+        if (CollectionUtils.isEmpty(rules)) {
+            return Lists.newArrayList();
+        }
+        List<RuleVO> ruleVOS = RuleVOTransfer.INSTANCE.mapToVOList(rules);
+        Map<Integer, String> nameMap = getAppNameMap(ruleVOS.stream().map(r -> r.getAppId()).collect(Collectors.toList()));
+        ruleVOS.forEach(ruleVO -> ruleVO.setAppName(nameMap.get(ruleVO.getAppId())));
+        return ruleVOS;
+    }
+
+    private Map<Integer, String> getAppNameMap(List<Integer> appIdList) {
+        QueryWrapper<App> query = Wrappers.query();
+        query.lambda().in(App::getId, appIdList);
+        List<App> apps = appMapper.selectList(query);
+        return apps.stream().collect(Collectors.toMap(App::getId, App::getAppName));
+    }
+
+    private App queryByAppName(String appName) {
+        QueryWrapper<App> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(App::getAppName, appName);
+        App app = appMapper.selectOne(wrapper);
+        return app;
     }
 }

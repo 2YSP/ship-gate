@@ -1,6 +1,7 @@
 package cn.sp.service;
 
 import cn.sp.pojo.dto.AppRuleDTO;
+import cn.sp.pojo.vo.RuleVO;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface RuleService {
     void add(AppRuleDTO appRuleDTO);
 
     void delete(Integer id);
+
+    List<RuleVO> queryList(String appName);
 }

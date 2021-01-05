@@ -1,6 +1,6 @@
 package cn.sp.controller;
 
-import cn.sp.pojo.AppVO;
+import cn.sp.pojo.vo.AppVO;
 import cn.sp.pojo.dto.RegisterAppDTO;
 import cn.sp.pojo.dto.UnregisterAppDTO;
 import cn.sp.service.AppService;

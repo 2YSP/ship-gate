@@ -1,6 +1,6 @@
 package cn.sp.service;
 
-import cn.sp.pojo.AppVO;
+import cn.sp.pojo.vo.AppVO;
 import cn.sp.pojo.dto.AppInfoDTO;
 import cn.sp.pojo.dto.RegisterAppDTO;
 import cn.sp.pojo.dto.UnregisterAppDTO;

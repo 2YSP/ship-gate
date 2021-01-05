@@ -1,7 +1,7 @@
 package cn.sp.transfer;
 
 import cn.sp.bean.App;
-import cn.sp.pojo.AppVO;
+import cn.sp.pojo.vo.AppVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;

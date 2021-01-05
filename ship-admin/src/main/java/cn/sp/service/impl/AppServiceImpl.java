@@ -9,7 +9,7 @@ import cn.sp.exception.ShipException;
 import cn.sp.mapper.AppPluginMapper;
 import cn.sp.mapper.PluginMapper;
 import cn.sp.pojo.AppPluginDTO;
-import cn.sp.pojo.AppVO;
+import cn.sp.pojo.vo.AppVO;
 import cn.sp.pojo.dto.AppInfoDTO;
 import cn.sp.pojo.dto.RegisterAppDTO;
 import cn.sp.mapper.AppInstanceMapper;
@@ -20,6 +20,7 @@ import cn.sp.service.AppService;
 import cn.sp.transfer.AppInstanceTransfer;
 import cn.sp.transfer.AppVOTransfer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -33,6 +34,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -186,11 +188,20 @@ public class AppServiceImpl implements AppService {
     public List<AppVO> getList() {
         QueryWrapper<App> wrapper = new QueryWrapper<>();
         List<App> apps = appMapper.selectList(wrapper);
-        if (CollectionUtils.isEmpty(apps)){
+        if (CollectionUtils.isEmpty(apps)) {
             return Lists.newArrayList();
         }
         List<AppVO> appVOS = AppVOTransfer.INSTANCE.mapToVOList(apps);
-        appVOS.forEach(appVO -> appVO.setInstanceNum(2));
+        List<Integer> appIds = appVOS.stream().map(AppVO::getId).collect(Collectors.toList());
+        QueryWrapper<AppInstance> query = Wrappers.query();
+        query.lambda().in(AppInstance::getAppId, appIds);
+        List<AppInstance> instances = instanceMapper.selectList(query);
+        if (CollectionUtils.isEmpty(instances)) {
+            appVOS.forEach(appVO -> appVO.setInstanceNum(0));
+        } else {
+            Map<Integer, List<AppInstance>> map = instances.stream().collect(Collectors.groupingBy(AppInstance::getAppId));
+            appVOS.forEach(appVO -> appVO.setInstanceNum(map.getOrDefault(appVO.getId(), Lists.newArrayList()).size()));
+        }
         return appVOS;
     }
 }
