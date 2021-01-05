@@ -29,10 +29,16 @@ public interface AppService {
      */
     void unregister(UnregisterAppDTO unregisterAppDTO);
 
-
+    /**
+     * get app infos by appNames
+     * @param appNames
+     * @return
+     */
     List<AppInfoDTO> getAppInfos(List<String> appNames);
 
     List<AppVO> getList();
 
     void updateEnabled(ChangeStatusDTO statusDTO);
+
+    void delete(Integer id);
 }

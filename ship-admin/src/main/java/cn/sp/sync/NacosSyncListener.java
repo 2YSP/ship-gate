@@ -1,5 +1,6 @@
 package cn.sp.sync;
 
+import cn.sp.constants.EnabledEnum;
 import cn.sp.constants.NacosConstants;
 import cn.sp.pojo.NacosMetadata;
 import cn.sp.pojo.dto.AppInfoDTO;
@@ -76,7 +77,7 @@ public class NacosSyncListener implements ApplicationListener<ContextRefreshedEv
         }
 
         /**
-         * Regular update weight,enabled plugins to nacos instance
+         * Regular update weight,enabled plugins,enabled status to nacos instance
          */
         @Override
         public void run() {
@@ -117,6 +118,7 @@ public class NacosSyncListener implements ApplicationListener<ContextRefreshedEv
             metadata.setPlugins(String.join(",", appInfo.getEnabledPlugins()));
             map.put("metadata", StringTools.urlEncode(gson.toJson(metadata)));
             map.put("ephemeral", true);
+            map.put("enabled", EnabledEnum.ENABLE.getCode().equals(appInfo.getEnabled()));
             return map;
         }
     }

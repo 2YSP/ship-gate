@@ -49,4 +49,11 @@ public class AppController {
         appService.updateEnabled(statusDTO);
         return Result.success();
     }
+
+    @ResponseBody
+    @DeleteMapping("/{id}")
+    public Result delete(@PathVariable("id")Integer id){
+        appService.delete(id);
+        return Result.success();
+    }
 }

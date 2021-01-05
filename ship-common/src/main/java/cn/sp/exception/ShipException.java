@@ -20,6 +20,7 @@ public final class ShipException extends RuntimeException {
     public ShipException(String errMsg) {
         super(errMsg);
         this.errMsg = errMsg;
+        this.code = 5000;
     }
 
     public ShipException(Integer code, String errMsg) {

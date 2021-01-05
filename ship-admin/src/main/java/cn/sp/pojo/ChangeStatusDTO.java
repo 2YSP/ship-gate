@@ -11,6 +11,16 @@ public class ChangeStatusDTO {
 
     private Byte enabled;
 
+    private String appName;
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -68,9 +68,9 @@
                         <td th:if="${item.enabled != 1}" style="color: red">禁用</td>
                         <td th:text="${item.createdTime}">2020-12-26 10:00:00</td>
                         <td>
-                            <button type="button" class="layui-btn ayui-btn-xs" th:if="${item.enabled != 1}"   th:onclick="changeStatus([[${item.id}]],1);">启用</button>
+                            <button type="button" class="layui-btn ayui-btn-xs" th:if="${item.enabled != 1}"   th:onclick="changeStatus([[${item.id}]],1,[[${item.appName}]]);">启用</button>
                             <button type="button" class="layui-btn ayui-btn-xs layui-btn-warm"
-                                    th:if="${item.enabled == 1}"   th:onclick="changeStatus([[${item.id}]],0);">禁用
+                                    th:if="${item.enabled == 1}"   th:onclick="changeStatus([[${item.id}]],0,[[${item.appName}]]);">禁用
                             </button>
                             <button type="button" class="layui-btn ayui-btn-xs layui-btn-danger"
                                     th:onclick="delRule([[${item.id}]]);">删除
@@ -107,10 +107,11 @@
 
     });
     
-    function changeStatus(id,status) {
+    function changeStatus(id,status,appName) {
         let obj = {
             "id":id,
-            "enabled":status
+            "enabled":status,
+            "appName":appName
         }
         $.ajax({
             type: "PUT",
@@ -122,7 +123,11 @@
                 'Content-Type': 'application/json'
             },
             success: function (data) {
-                window.location.href = "/rule/list/";
+                if (data.code == 200){
+                    window.location.href = "/rule/list/";
+                }else {
+                    layer.msg(data.message);
+                }
             },
             error: function (e) {
                 layer.msg(e);
@@ -132,9 +137,8 @@
 
 
     function delRule(id) {
-        layer.confirm('确定要删除该规则吗？', {
-            btn: ['确认', '取消']
-        }, function (index, layero) {
+        layer.confirm('确定要删除该规则吗', {icon: 3, title:'提示'}, function(index){
+            console.log(1111);
             $.ajax({
                 type: "DELETE",
                 url: "/rule/" + id,
@@ -145,15 +149,18 @@
                     'Content-Type': 'application/json'
                 },
                 success: function (data) {
-                    console.log(data);
-                    window.location.href = "/rule/list/";
+                    if (data.code == 200){
+                        layer.msg("删除成功");
+                        window.location.href = "/rule/list/";
+                    }else {
+                        layer.msg(data.message);
+                    }
                 },
                 error: function (e) {
                     layer.msg(e);
                 }
             });
-        }, function (index) {
-            console.log(index);
+            layer.close(index);
         });
     }
 </script>

@@ -10,6 +10,7 @@ import cn.sp.utils.ShipThreadFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.enums.ReadyState;
 import org.java_websocket.handshake.ServerHandshake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,9 +90,9 @@ public class WebsocketSyncCacheClient {
     }
 
     public <T> void send(T t) {
-//        while (!client.getReadyState().equals(ReadyState.OPEN)) {
-//            LOGGER.debug("connecting ...please wait");
-//        }
+        while (!client.getReadyState().equals(ReadyState.OPEN)) {
+            throw new ShipException("Please check if the ship-server is started！");
+        }
         client.send(gson.toJson(t));
     }
 }

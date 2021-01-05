@@ -13,10 +13,19 @@ public class AppInfoDTO {
 
     private String appName;
 
+    private Byte enabled;
+
     private List<ServiceInstance> instances;
 
     private List<String> enabledPlugins;
 
+    public Byte getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Byte enabled) {
+        this.enabled = enabled;
+    }
 
     public Integer getAppId() {
         return appId;

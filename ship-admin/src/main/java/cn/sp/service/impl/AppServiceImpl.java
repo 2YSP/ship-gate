@@ -167,6 +167,7 @@ public class AppServiceImpl implements AppService {
             AppInfoDTO appInfoDTO = new AppInfoDTO();
             appInfoDTO.setAppId(app.getId());
             appInfoDTO.setAppName(app.getAppName());
+            appInfoDTO.setEnabled(app.getEnabled());
             List<String> enabledPlugins = appPluginDTOS.stream().filter(r -> r.getAppId().equals(app.getId()))
                     .map(AppPluginDTO::getCode)
                     .collect(Collectors.toList());
@@ -206,12 +207,26 @@ public class AppServiceImpl implements AppService {
         return appVOS;
     }
 
+    /**
+     * if disable the app,it will make all instances offline
+     * @param statusDTO
+     */
     @Override
     public void updateEnabled(ChangeStatusDTO statusDTO) {
         App app = new App();
         app.setId(statusDTO.getId());
         app.setEnabled(statusDTO.getEnabled());
         appMapper.updateById(app);
-        // todo publish event
+    }
+
+    @Override
+    public void delete(Integer id) {
+        QueryWrapper<AppInstance> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(AppInstance::getAppId,id);
+        List<AppInstance> instances = instanceMapper.selectList(wrapper);
+        if (!CollectionUtils.isEmpty(instances)){
+            throw new ShipException("该服务存在实例不可删除！");
+        }
+        appMapper.deleteById(id);
     }
 }

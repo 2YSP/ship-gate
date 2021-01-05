@@ -18,6 +18,7 @@ import cn.sp.transfer.RuleVOTransfer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.common.collect.Lists;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -69,6 +70,7 @@ public class RuleServiceImpl implements RuleService {
         return appRuleDTOS;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void add(AppRuleDTO appRuleDTO) {
         RouteRule routeRule = new RouteRule();
@@ -132,12 +134,20 @@ public class RuleServiceImpl implements RuleService {
         return app;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void changeStatus(ChangeStatusDTO statusDTO) {
         RouteRule routeRule = new RouteRule();
         routeRule.setId(statusDTO.getId());
         routeRule.setEnabled(statusDTO.getEnabled());
         ruleMapper.updateById(routeRule);
-        // todo publish event
+        AppRuleDTO appRuleDTO = new AppRuleDTO();
+        BeanUtils.copyProperties(routeRule, appRuleDTO);
+        appRuleDTO.setAppName(statusDTO.getAppName());
+        if (EnabledEnum.ENABLE.getCode().equals(statusDTO.getEnabled())) {
+            eventPublisher.publishEvent(new RuleAddEvent(this, appRuleDTO));
+        } else {
+            eventPublisher.publishEvent(new RuleDeleteEvent(this, appRuleDTO));
+        }
     }
 }
