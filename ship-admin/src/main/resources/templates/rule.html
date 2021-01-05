@@ -21,7 +21,8 @@
                 <form class="layui-form" action="/rule/list">
                     <div class="layui-form-item">
                         <div class="layui-inline tool-btn">
-                            <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-url="article-add.html"><i class="layui-icon">&#xe654;</i></button>
+                            <button class="layui-btn layui-btn-small layui-btn-normal addBtn"
+                                    data-url="article-add.html"><i class="layui-icon">&#xe654;</i></button>
                         </div>
                         <div class="layui-inline">
                             <input type="text" name="appName" placeholder="请输入服务名称"
@@ -71,7 +72,9 @@
                             <button type="button" class="layui-btn ayui-btn-xs layui-btn-warm"
                                     th:if="${item.enabled == 1}">禁用
                             </button>
-                            <button type="button" class="layui-btn ayui-btn-xs layui-btn-danger">删除</button>
+                            <button type="button" class="layui-btn ayui-btn-xs layui-btn-danger"
+                                    th:onclick="delRule([[${item.id}]]);">删除
+                            </button>
                         </td>
                     </tr>
                     </tbody>
@@ -86,12 +89,51 @@
     <span th:replace="common::footer"></span>
 </div>
 <script src="/static/layui/layui.js"></script>
+<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
 <script>
     //JavaScript代码区域
     layui.use('element', function () {
         var element = layui.element;
 
     });
+
+    var layer;
+
+    layui.use('layer', function () {
+        layer = layui.layer;
+    });
+
+    $(function () {
+
+    });
+
+
+    function delRule(id) {
+        layer.confirm('确定要删除该规则吗？', {
+            btn: ['确认', '取消']
+        }, function (index, layero) {
+            console.log(id);
+            $.ajax({
+                type: "DELETE",
+                url: "/rule/" + id,
+                data: "{}",
+                dataType: "json",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    window.location.href = "/rule/list/";
+                },
+                error: function (e) {
+                    alert(e);
+                }
+            });
+        }, function (index) {
+            console.log(index);
+        });
+    }
 </script>
 </body>
 </html>

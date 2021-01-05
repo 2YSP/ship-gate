@@ -37,12 +37,14 @@ public class RuleController {
      * @param appRuleDTO
      * @return
      */
+    @ResponseBody
     @PostMapping("")
     public Result add(@RequestBody @Validated AppRuleDTO appRuleDTO) {
         ruleService.add(appRuleDTO);
         return Result.success();
     }
 
+    @ResponseBody
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable("id") Integer id) {
         ruleService.delete(id);

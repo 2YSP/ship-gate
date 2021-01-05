@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -78,6 +79,7 @@ public class RuleServiceImpl implements RuleService {
         eventPublisher.publishEvent(new RuleAddEvent(this, appRuleDTO));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Integer id) {
         RouteRule routeRule = ruleMapper.selectById(id);
