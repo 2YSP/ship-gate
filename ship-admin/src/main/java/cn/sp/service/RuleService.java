@@ -1,5 +1,6 @@
 package cn.sp.service;
 
+import cn.sp.pojo.ChangeStatusDTO;
 import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.pojo.vo.RuleVO;
 
@@ -19,4 +20,6 @@ public interface RuleService {
     void delete(Integer id);
 
     List<RuleVO> queryList(String appName);
+
+    void changeStatus(ChangeStatusDTO statusDTO);
 }

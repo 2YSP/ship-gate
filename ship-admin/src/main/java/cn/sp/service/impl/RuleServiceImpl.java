@@ -9,6 +9,7 @@ import cn.sp.event.RuleDeleteEvent;
 import cn.sp.exception.ShipException;
 import cn.sp.mapper.AppMapper;
 import cn.sp.mapper.RouteRuleMapper;
+import cn.sp.pojo.ChangeStatusDTO;
 import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.pojo.vo.RuleVO;
 import cn.sp.service.RuleService;
@@ -129,5 +130,14 @@ public class RuleServiceImpl implements RuleService {
         wrapper.lambda().eq(App::getAppName, appName);
         App app = appMapper.selectOne(wrapper);
         return app;
+    }
+
+    @Override
+    public void changeStatus(ChangeStatusDTO statusDTO) {
+        RouteRule routeRule = new RouteRule();
+        routeRule.setId(statusDTO.getId());
+        routeRule.setEnabled(statusDTO.getEnabled());
+        ruleMapper.updateById(routeRule);
+        // todo publish event
     }
 }

@@ -1,5 +1,6 @@
 package cn.sp.service;
 
+import cn.sp.pojo.ChangeStatusDTO;
 import cn.sp.pojo.vo.AppVO;
 import cn.sp.pojo.dto.AppInfoDTO;
 import cn.sp.pojo.dto.RegisterAppDTO;
@@ -32,4 +33,6 @@ public interface AppService {
     List<AppInfoDTO> getAppInfos(List<String> appNames);
 
     List<AppVO> getList();
+
+    void updateEnabled(ChangeStatusDTO statusDTO);
 }

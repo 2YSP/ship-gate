@@ -1,5 +1,6 @@
 package cn.sp.controller;
 
+import cn.sp.pojo.ChangeStatusDTO;
 import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.pojo.vo.Result;
 import cn.sp.pojo.vo.RuleVO;
@@ -57,5 +58,12 @@ public class RuleController {
         map.put("ruleVOS", ruleVOS);
         map.put("appName", appName);
         return "rule";
+    }
+
+    @ResponseBody
+    @PutMapping("/status")
+    public Result changeStatus(@RequestBody ChangeStatusDTO statusDTO){
+        ruleService.changeStatus(statusDTO);
+        return Result.success();
     }
 }

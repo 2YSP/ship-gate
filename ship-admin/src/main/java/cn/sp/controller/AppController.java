@@ -1,8 +1,10 @@
 package cn.sp.controller;
 
-import cn.sp.pojo.vo.AppVO;
+import cn.sp.pojo.ChangeStatusDTO;
 import cn.sp.pojo.dto.RegisterAppDTO;
 import cn.sp.pojo.dto.UnregisterAppDTO;
+import cn.sp.pojo.vo.AppVO;
+import cn.sp.pojo.vo.Result;
 import cn.sp.service.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,5 +41,12 @@ public class AppController {
         List<AppVO> appVOList = appService.getList();
         model.put("appVOList", appVOList);
         return "applist";
+    }
+
+    @ResponseBody
+    @PutMapping("/status")
+    public Result updateEnabled(@RequestBody ChangeStatusDTO statusDTO){
+        appService.updateEnabled(statusDTO);
+        return Result.success();
     }
 }

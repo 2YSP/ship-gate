@@ -68,9 +68,9 @@
                         <td th:if="${item.enabled != 1}" style="color: red">禁用</td>
                         <td th:text="${item.createdTime}">2020-12-26 10:00:00</td>
                         <td>
-                            <button type="button" class="layui-btn ayui-btn-xs" th:if="${item.enabled != 1}">启用</button>
+                            <button type="button" class="layui-btn ayui-btn-xs" th:if="${item.enabled != 1}"   th:onclick="changeStatus([[${item.id}]],1);">启用</button>
                             <button type="button" class="layui-btn ayui-btn-xs layui-btn-warm"
-                                    th:if="${item.enabled == 1}">禁用
+                                    th:if="${item.enabled == 1}"   th:onclick="changeStatus([[${item.id}]],0);">禁用
                             </button>
                             <button type="button" class="layui-btn ayui-btn-xs layui-btn-danger"
                                     th:onclick="delRule([[${item.id}]]);">删除
@@ -106,13 +106,35 @@
     $(function () {
 
     });
+    
+    function changeStatus(id,status) {
+        let obj = {
+            "id":id,
+            "enabled":status
+        }
+        $.ajax({
+            type: "PUT",
+            url: "/rule/status",
+            data: JSON.stringify(obj),
+            dataType: "json",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success: function (data) {
+                window.location.href = "/rule/list/";
+            },
+            error: function (e) {
+                layer.msg(e);
+            }
+        });
+    }
 
 
     function delRule(id) {
         layer.confirm('确定要删除该规则吗？', {
             btn: ['确认', '取消']
         }, function (index, layero) {
-            console.log(id);
             $.ajax({
                 type: "DELETE",
                 url: "/rule/" + id,
@@ -127,7 +149,7 @@
                     window.location.href = "/rule/list/";
                 },
                 error: function (e) {
-                    alert(e);
+                    layer.msg(e);
                 }
             });
         }, function (index) {

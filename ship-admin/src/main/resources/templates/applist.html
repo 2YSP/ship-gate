@@ -54,11 +54,11 @@
                         <td th:if="${item.enabled != 1}" style="color: red">禁用</td>
                         <td th:text="${item.createdTime}">2020-12-26 10:00:00</td>
                         <td>
-                            <button type="button" class="layui-btn ayui-btn-xs" th:if="${item.enabled != 1}">启用</button>
+                            <button type="button" class="layui-btn ayui-btn-xs" th:if="${item.enabled != 1}" th:onclick="changeStatus([[${item.id}]],1);">启用</button>
                             <button type="button" class="layui-btn ayui-btn-xs layui-btn-warm"
-                                    th:if="${item.enabled == 1}">禁用
+                                    th:if="${item.enabled == 1}" th:onclick="changeStatus([[${item.id}]],0);">禁用
                             </button>
-                            <button type="button" class="layui-btn ayui-btn-xs layui-btn-danger">删除</button>
+<!--                            <button type="button" class="layui-btn ayui-btn-xs layui-btn-danger" th:onclick="del([[${item.id}]]);">删除</button>-->
                         </td>
                     </tr>
                     </tbody>
@@ -73,12 +73,71 @@
     <span th:replace="common::footer"></span>
 </div>
 <script src="/static/layui/layui.js"></script>
+<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
 <script>
     //JavaScript代码区域
     layui.use('element', function () {
         var element = layui.element;
 
     });
+
+    var layer;
+    layui.use('layer', function () {
+        layer = layui.layer;
+    });
+
+    function changeStatus(id,status) {
+        let obj = {
+            "id":id,
+            "enabled":status
+        }
+        $.ajax({
+            type: "PUT",
+            url: "/app/status",
+            data: JSON.stringify(obj),
+            dataType: "json",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success: function (data) {
+                if (data.code == 200){
+                    window.location.href = "/app/list/";
+                }else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (e) {
+                layer.msg(e);
+            }
+        });
+    }
+
+    // function del(id) {
+    //     layer.confirm('确定要删除该服务吗？', {
+    //         btn: ['确认', '取消']
+    //     }, function (index, layero) {
+    //         $.ajax({
+    //             type: "DELETE",
+    //             url: "/app/" + id,
+    //             data: "{}",
+    //             dataType: "json",
+    //             headers: {
+    //                 'Accept': 'application/json',
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             success: function (data) {
+    //                 console.log(data);
+    //                 window.location.href = "/app/list/";
+    //             },
+    //             error: function (e) {
+    //                 layer.msg(e);
+    //             }
+    //         });
+    //     }, function (index) {
+    //         console.log(index);
+    //     });
+    // }
 </script>
 </body>
 </html>

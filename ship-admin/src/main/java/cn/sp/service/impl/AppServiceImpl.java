@@ -9,6 +9,7 @@ import cn.sp.exception.ShipException;
 import cn.sp.mapper.AppPluginMapper;
 import cn.sp.mapper.PluginMapper;
 import cn.sp.pojo.AppPluginDTO;
+import cn.sp.pojo.ChangeStatusDTO;
 import cn.sp.pojo.vo.AppVO;
 import cn.sp.pojo.dto.AppInfoDTO;
 import cn.sp.pojo.dto.RegisterAppDTO;
@@ -203,5 +204,14 @@ public class AppServiceImpl implements AppService {
             appVOS.forEach(appVO -> appVO.setInstanceNum(map.getOrDefault(appVO.getId(), Lists.newArrayList()).size()));
         }
         return appVOS;
+    }
+
+    @Override
+    public void updateEnabled(ChangeStatusDTO statusDTO) {
+        App app = new App();
+        app.setId(statusDTO.getId());
+        app.setEnabled(statusDTO.getEnabled());
+        appMapper.updateById(app);
+        // todo publish event
     }
 }
