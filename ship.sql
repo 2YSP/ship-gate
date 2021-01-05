@@ -90,6 +90,7 @@ CREATE TABLE `t_route_rule` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `app_id` int(11) NOT NULL COMMENT '应用Id',
   `version` varchar(32) NOT NULL DEFAULT '' COMMENT '路由版本',
+   `name` varchar(32) NOT NULL DEFAULT '' COMMENT '名称',
   `match_object` varchar(32) NOT NULL DEFAULT '' COMMENT '匹配对象，DEFAULT，QUERY，HEADER',
   `match_key` varchar(50) NOT NULL DEFAULT '' COMMENT '匹配key',
   `match_method` tinyint(1) NOT NULL DEFAULT '0' COMMENT '匹配方式,1:=,2:regex,3:like',
