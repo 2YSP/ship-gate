@@ -18,10 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -73,6 +70,7 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
                     return;
                 }
                 List<String> appNames = services.getData();
+                List<String> onlineAppNames = new ArrayList<>();
                 // get all instances
                 for (String appName : appNames) {
                     List<Instance> instanceList = namingService.getAllInstances(appName, NacosConstants.APP_GROUP_NAME);
@@ -82,9 +80,10 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
                     ServiceCache.add(appName, buildServiceInstances(instanceList));
                     List<String> pluginNames = getEnabledPlugins(instanceList);
                     PluginCache.add(appName, pluginNames);
+                    onlineAppNames.add(appName);
                 }
-                ServiceCache.removeExpired(appNames);
-                PluginCache.removeExpired(appNames);
+                ServiceCache.removeExpired(onlineAppNames);
+                PluginCache.removeExpired(onlineAppNames);
 
             } catch (NacosException e) {
                 e.printStackTrace();
