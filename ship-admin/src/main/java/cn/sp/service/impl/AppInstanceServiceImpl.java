@@ -4,6 +4,7 @@ import cn.sp.bean.App;
 import cn.sp.bean.AppInstance;
 import cn.sp.mapper.AppInstanceMapper;
 import cn.sp.mapper.AppMapper;
+import cn.sp.pojo.UpdateWeightDTO;
 import cn.sp.pojo.vo.InstanceVO;
 import cn.sp.service.AppInstanceService;
 import cn.sp.transfer.InstanceVOTransfer;
@@ -41,5 +42,13 @@ public class AppInstanceServiceImpl implements AppInstanceService {
         List<InstanceVO> voList = InstanceVOTransfer.INSTANCE.mapToVOS(instanceList);
         voList.forEach(vo -> vo.setAppName(app.getAppName()));
         return voList;
+    }
+
+    @Override
+    public void updateWeight(UpdateWeightDTO updateWeightDTO) {
+        AppInstance appInstance = new AppInstance();
+        appInstance.setId(updateWeightDTO.getId());
+        appInstance.setWeight(updateWeightDTO.getWeight());
+        instanceMapper.updateById(appInstance);
     }
 }

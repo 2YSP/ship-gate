@@ -1,5 +1,6 @@
 package cn.sp.service;
 
+import cn.sp.pojo.UpdateWeightDTO;
 import cn.sp.pojo.vo.InstanceVO;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface AppInstanceService {
      * @return
      */
     List<InstanceVO> queryList(Integer appId);
+
+    void updateWeight(UpdateWeightDTO updateWeightDTO);
 }
