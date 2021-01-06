@@ -1,6 +1,7 @@
 package cn.sp.service.impl;
 
 import cn.sp.bean.App;
+import cn.sp.bean.AppInstance;
 import cn.sp.bean.RouteRule;
 import cn.sp.constants.EnabledEnum;
 import cn.sp.constants.MatchMethodEnum;
@@ -9,6 +10,7 @@ import cn.sp.constants.ShipExceptionEnum;
 import cn.sp.event.RuleAddEvent;
 import cn.sp.event.RuleDeleteEvent;
 import cn.sp.exception.ShipException;
+import cn.sp.mapper.AppInstanceMapper;
 import cn.sp.mapper.AppMapper;
 import cn.sp.mapper.RouteRuleMapper;
 import cn.sp.pojo.ChangeStatusDTO;
@@ -49,6 +51,9 @@ public class RuleServiceImpl implements RuleService {
 
     @Resource
     private AppMapper appMapper;
+
+    @Resource
+    private AppInstanceMapper instanceMapper;
 
     @Resource
     private ApplicationEventPublisher eventPublisher;
@@ -106,6 +111,14 @@ public class RuleServiceImpl implements RuleService {
                     || StringUtils.isEmpty(ruleDTO.getMatchRule())) {
                 throw new ShipException(ShipExceptionEnum.PARAM_ERROR);
             }
+        }
+        // check version
+        QueryWrapper<AppInstance> query = Wrappers.query();
+        query.lambda().eq(AppInstance::getAppId,ruleDTO.getAppId())
+            .eq(AppInstance::getVersion,ruleDTO.getVersion());
+        List<AppInstance> list = instanceMapper.selectList(query);
+        if (CollectionUtils.isEmpty(list)){
+            throw new ShipException("实例版本不存在");
         }
     }
 

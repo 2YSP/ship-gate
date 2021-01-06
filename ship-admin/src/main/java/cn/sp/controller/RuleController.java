@@ -41,10 +41,11 @@ public class RuleController {
      * @param ruleDTO
      * @return
      */
+    @ResponseBody
     @PostMapping("")
-    public void add(@Validated RuleDTO ruleDTO, HttpServletResponse response) throws IOException {
+    public Result add(@Validated RuleDTO ruleDTO){
         ruleService.add(ruleDTO);
-        response.sendRedirect("/rule/list");
+        return Result.success();
     }
 
     @ResponseBody
@@ -64,7 +65,7 @@ public class RuleController {
 
     @ResponseBody
     @PutMapping("/status")
-    public Result changeStatus(@RequestBody ChangeStatusDTO statusDTO){
+    public Result changeStatus(@RequestBody ChangeStatusDTO statusDTO) {
         ruleService.changeStatus(statusDTO);
         return Result.success();
     }

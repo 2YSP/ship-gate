@@ -46,7 +46,7 @@
                         <th>序号</th>
                         <th>名称</th>
                         <th>服务名称</th>
-                        <th>路由版本</th>
+                        <th>实例版本</th>
                         <th>匹配逻辑</th>
                         <th>优先级</th>
                         <th>状态</th>
@@ -136,6 +136,30 @@
                         });
                         /* 渲染表单 */
                         form.render();
+
+                        form.on('submit(ruleForm)', function(data){
+                            console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+                            $.ajax({
+                                url:'/rule',
+                                data:data.field,                 //将表单数据序列化，格式为name=value
+                                type:'POST',
+                                dataType:'json',
+                                success:function(data){
+                                    //success
+                                    if (data.code == 200) {
+                                        layer.msg("添加成功");
+                                        location.reload();
+                                    } else {
+                                        layer.msg(data.message);
+                                    }
+                                },
+                                error:function(){
+                                    console.log("提交ajax函数异常");
+                                },
+                            });
+
+                            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                        });
                     } else {
                         layer.msg(data.message);
                     }
@@ -145,11 +169,13 @@
                 }
             });
         }
+
+
     });
 
 
     var addhtml = '<div style="height: 550px;width: 350px;">\n' +
-        '\t<form class="layui-form" action="/rule" style="margin:20px 20px" method="post">\n' +
+        '\t<form class="layui-form" action="" style="margin:20px 20px" method="post">\n' +
         '  <div class="layui-form-item">\n' +
         '    <label class="layui-form-label"><span style="color:red">*</span>名称：</label>\n' +
         '    <div class="layui-input-block">\n' +
@@ -158,9 +184,9 @@
         '  </div>  APPList\n' +
         '\n' +
         '  <div class="layui-form-item">\n' +
-        '    <label class="layui-form-label"><span style="color:red">*</span>路由版本：</label>\n' +
+        '    <label class="layui-form-label"><span style="color:red">*</span>实例版本：</label>\n' +
         '    <div class="layui-input-block">\n' +
-        '      <input type="text" name="version" required  lay-verify="required" placeholder="请输入路由版本" autocomplete="off" class="layui-input">\n' +
+        '      <input type="text" name="version" required  lay-verify="required" placeholder="请输入实例版本" autocomplete="off" class="layui-input">\n' +
         '    </div>\n' +
         '  </div>\n' +
         '\n' +
@@ -218,13 +244,12 @@
         '  </div>\n' +
         '  <div class="layui-form-item">\n' +
         '    <div class="layui-input-block">\n' +
-        '      <button class="layui-btn" lay-submit lay-filter="formDemo">确认</button>\n' +
+        '      <button class="layui-btn" lay-submit lay-filter="ruleForm">确认</button>\n' +
         '      <button type="reset" class="layui-btn layui-btn-primary">重置</button>\n' +
         '    </div>\n' +
         '  </div>\n' +
         '</form>\n' +
         '</div>';
-
 
     function changeStatus(id, status, appName) {
         let obj = {
