@@ -1,22 +1,25 @@
-package cn.sp.pojo.vo;
+package cn.sp.pojo;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * @Author: Ship
  * @Description:
- * @Date: Created in 2021/1/5
+ * @Date: Created in 2021/1/6
  */
-public class RuleVO {
+public class RuleDTO {
 
-    private Integer id;
-
-    private String name;
-
+    @NotNull(message = "appId不能为空")
     private Integer appId;
 
-    private String appName;
+    @NotEmpty(message = "name不能为空")
+    private String name;
 
+    @NotEmpty(message = "version不能为空")
     private String version;
 
+    @NotEmpty(message = "matchObject不能为空")
     private String matchObject;
 
     private String matchKey;
@@ -25,38 +28,17 @@ public class RuleVO {
 
     private String matchRule;
 
+    @NotNull(message = "priority不能为空")
+    private Integer priority;
+
     private Byte enabled;
 
-    private String createdTime;
-
-    private Integer priority;
-    /**
-     * eg: [name] = [ship]
-     */
-    private String matchStr;
-
-    public String getMatchStr() {
-        return matchStr;
+    public Byte getEnabled() {
+        return enabled;
     }
 
-    public void setMatchStr(String matchStr) {
-        this.matchStr = matchStr;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
+    public void setEnabled(Byte enabled) {
+        this.enabled = enabled;
     }
 
     public Integer getAppId() {
@@ -67,12 +49,12 @@ public class RuleVO {
         this.appId = appId;
     }
 
-    public String getAppName() {
-        return appName;
+    public String getName() {
+        return name;
     }
 
-    public void setAppName(String appName) {
-        this.appName = appName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getVersion() {
@@ -113,22 +95,6 @@ public class RuleVO {
 
     public void setMatchRule(String matchRule) {
         this.matchRule = matchRule;
-    }
-
-    public Byte getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Byte enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(String createdTime) {
-        this.createdTime = createdTime;
     }
 
     public Integer getPriority() {

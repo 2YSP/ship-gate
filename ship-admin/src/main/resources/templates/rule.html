@@ -61,7 +61,7 @@
                         <td th:text="${item.name}">默认</td>
                         <td th:text="${item.appName}">order</td>
                         <td th:text="${item.version}">gray_1.0</td>
-                        <td th:text="${item.matchObject}">/order</td>
+                        <td th:text="${item.matchStr}">/order</td>
                         <td th:text="${item.priority}">
                             1
                         </td>
@@ -97,34 +97,68 @@
 <script>
     var layer;
     var form;
-    layui.use(['form','layer'], function () {
+    layui.use(['form', 'layer'], function () {
         form = layui.form;
         layer = layui.layer;
         let btn = document.getElementById('addRule');
         btn.onclick = function () {
-            layer.open({
-                type: 1,
-                title: '新增',
-                shadeClose: true, //点击遮罩关闭
-                content: addhtml
+            let appHtml = '';
+
+            $.ajax({
+                type: "GET",
+                url: "/app/all",
+                // data: '{}',
+                // dataType: "json",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'text/html'
+                },
+                success: function (data) {
+                    if (data.code == 200) {
+                        var appList = data.data;
+
+                        var temp = ' <div class="layui-form-item">\n' +
+                            '                                <label class="layui-form-label"><span style="color:red">*</span>服务名称：</label>\n' +
+                            '                                <div class="layui-input-block">\n' +
+                            '                                    <select name="appId" lay-verify="required">\n' +
+                            '                                        <option value="">请选择服务名称</option>';
+                        for (var i = 0; i < appList.length; i++) {
+
+                            temp += '<option value="' + appList[i].id + '">' + appList[i].appName + '</option>';
+                        }
+                        temp += '</select></div></div>';
+                        var addForm = addhtml.replace(/APPList/, temp);
+                        layer.open({
+                            type: 1,
+                            title: '新增',
+                            shadeClose: true, //点击遮罩关闭
+                            content: addForm
+                        });
+                        /* 渲染表单 */
+                        form.render();
+                    } else {
+                        layer.msg(data.message);
+                    }
+                },
+                error: function (e) {
+                    layer.msg(e);
+                }
             });
-            /* 渲染表单 */
-            form.render();
         }
     });
 
 
-    var addhtml = '<div style="height: 500px;width: 350px;">\n' +
-        '\t<form class="layui-form" action="" style="margin:20px 20px" method="post">\n' +
+    var addhtml = '<div style="height: 550px;width: 350px;">\n' +
+        '\t<form class="layui-form" action="/rule" style="margin:20px 20px" method="post">\n' +
         '  <div class="layui-form-item">\n' +
-        '    <label class="layui-form-label">名称：</label>\n' +
+        '    <label class="layui-form-label"><span style="color:red">*</span>名称：</label>\n' +
         '    <div class="layui-input-block">\n' +
         '      <input type="text" name="name" required  lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">\n' +
         '    </div>\n' +
-        '  </div>\n' +
+        '  </div>  APPList\n' +
         '\n' +
         '  <div class="layui-form-item">\n' +
-        '    <label class="layui-form-label">路由版本：</label>\n' +
+        '    <label class="layui-form-label"><span style="color:red">*</span>路由版本：</label>\n' +
         '    <div class="layui-input-block">\n' +
         '      <input type="text" name="version" required  lay-verify="required" placeholder="请输入路由版本" autocomplete="off" class="layui-input">\n' +
         '    </div>\n' +
@@ -132,13 +166,13 @@
         '\n' +
         '\n' +
         '   <div class="layui-form-item">\n' +
-        '    <label class="layui-form-label">匹配对象：</label>\n' +
+        '    <label class="layui-form-label"><span style="color:red">*</span>匹配对象：</label>\n' +
         '    <div class="layui-input-block">\n' +
         '      <select name="matchObject" lay-verify="required">\n' +
         '        <option value="">请选择匹配对象</option>\n' +
-        '        <option value="0">DEFAULT</option>\n' +
-        '        <option value="1">HEADER</option>\n' +
-        '        <option value="2">QUERY</option>\n' +
+        '        <option value="DEFAULT">DEFAULT</option>\n' +
+        '        <option value="HEADER">HEADER</option>\n' +
+        '        <option value="QUERY">QUERY</option>\n' +
         '      </select>\n' +
         '    </div>\n' +
         '  </div>\n' +
@@ -146,14 +180,14 @@
         '  <div class="layui-form-item">\n' +
         '    <label class="layui-form-label">匹配名称：</label>\n' +
         '    <div class="layui-input-block">\n' +
-        '      <input type="text" name="matchKey" required  lay-verify="required" placeholder="请输入匹配名称" autocomplete="off" class="layui-input">\n' +
+        '      <input type="text" name="matchKey"  placeholder="请输入匹配名称" autocomplete="off" class="layui-input">\n' +
         '    </div>\n' +
         '  </div>\n' +
         '\n' +
         '  <div class="layui-form-item">\n' +
         '    <label class="layui-form-label">匹配方式：</label>\n' +
         '    <div class="layui-input-block">\n' +
-        '      <select name="matchMethod" lay-verify="required">\n' +
+        '      <select name="matchMethod">\n' +
         '        <option value="">请选择匹配方式</option>\n' +
         '        <option value="1">=</option>\n' +
         '        <option value="2">regex</option>\n' +
@@ -165,21 +199,21 @@
         '    <div class="layui-form-item">\n' +
         '    <label class="layui-form-label">匹配规则：</label>\n' +
         '    <div class="layui-input-block">\n' +
-        '      <input type="text" name="matchRule" required  lay-verify="required" placeholder="请输入匹配规则" autocomplete="off" class="layui-input">\n' +
+        '      <input type="text" name="matchRule"  placeholder="请输入匹配规则" autocomplete="off" class="layui-input">\n' +
         '    </div>\n' +
         '  </div>\n' +
         '\n' +
         '    <div class="layui-form-item">\n' +
-        '    <label class="layui-form-label">优先级：</label>\n' +
+        '    <label class="layui-form-label"><span style="color:red">*</span>优先级：</label>\n' +
         '    <div class="layui-input-block">\n' +
-        '      <input type="text" name="priority" required  lay-verify="required" placeholder="请输入优先级" autocomplete="off" class="layui-input">\n' +
+        '      <input type="text" name="priority" required  lay-verify="required" placeholder="请输入优先级(0-50)" autocomplete="off" class="layui-input">\n' +
         '    </div>\n' +
         '  </div>\n' +
         '\n' +
         '  <div class="layui-form-item">\n' +
         '    <label class="layui-form-label">状态：</label>\n' +
         '    <div class="layui-input-block">\n' +
-        '      <input type="checkbox" name="enabled" lay-skin="switch" lay-text="启用|禁用">\n' +
+        '      <input type="checkbox" name="enabled" lay-skin="switch" lay-text="启用|禁用" value="1">\n' +
         '    </div>\n' +
         '  </div>\n' +
         '  <div class="layui-form-item">\n' +

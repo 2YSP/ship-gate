@@ -56,4 +56,10 @@ public class AppController {
         appService.delete(id);
         return Result.success();
     }
+
+    @ResponseBody
+    @GetMapping("/all")
+    public Result<List<AppVO>> getAppList(){
+        return Result.success(appService.getList());
+    }
 }

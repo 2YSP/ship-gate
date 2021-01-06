@@ -1,5 +1,7 @@
 package cn.sp.constants;
 
+import java.util.stream.Stream;
+
 /**
  * @Author: Ship
  * @Description:
@@ -9,15 +11,15 @@ public enum MatchMethodEnum {
     /**
      * =
      */
-    EQUAL((byte)1, "="),
+    EQUAL((byte) 1, "="),
     /**
      * regex
      */
-    REGEX((byte)2, "regex"),
+    REGEX((byte) 2, "regex"),
     /**
      * like
      */
-    LIKE((byte)3, "like");
+    LIKE((byte) 3, "like");
 
 
     private Byte code;
@@ -35,5 +37,9 @@ public enum MatchMethodEnum {
 
     public String getDesc() {
         return desc;
+    }
+
+    public static MatchMethodEnum getByCode(Byte code) {
+        return Stream.of(values()).filter(r -> r.getCode().equals(code)).findFirst().orElse(null);
     }
 }

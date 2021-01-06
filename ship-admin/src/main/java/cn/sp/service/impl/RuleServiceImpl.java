@@ -3,6 +3,8 @@ package cn.sp.service.impl;
 import cn.sp.bean.App;
 import cn.sp.bean.RouteRule;
 import cn.sp.constants.EnabledEnum;
+import cn.sp.constants.MatchMethodEnum;
+import cn.sp.constants.MatchObjectEnum;
 import cn.sp.constants.ShipExceptionEnum;
 import cn.sp.event.RuleAddEvent;
 import cn.sp.event.RuleDeleteEvent;
@@ -10,6 +12,7 @@ import cn.sp.exception.ShipException;
 import cn.sp.mapper.AppMapper;
 import cn.sp.mapper.RouteRuleMapper;
 import cn.sp.pojo.ChangeStatusDTO;
+import cn.sp.pojo.RuleDTO;
 import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.pojo.vo.RuleVO;
 import cn.sp.service.RuleService;
@@ -71,14 +74,39 @@ public class RuleServiceImpl implements RuleService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void add(AppRuleDTO appRuleDTO) {
+    public void add(RuleDTO ruleDTO) {
+        checkRule(ruleDTO);
+
+        App app = appMapper.selectById(ruleDTO.getAppId());
         RouteRule routeRule = new RouteRule();
-        BeanUtils.copyProperties(appRuleDTO, routeRule);
-        routeRule.setEnabled(EnabledEnum.ENABLE.getCode());
+        BeanUtils.copyProperties(ruleDTO, routeRule);
         routeRule.setCreatedTime(LocalDateTime.now());
         ruleMapper.insert(routeRule);
-        appRuleDTO.setId(routeRule.getId());
-        eventPublisher.publishEvent(new RuleAddEvent(this, appRuleDTO));
+
+        if (EnabledEnum.ENABLE.getCode().equals(ruleDTO.getEnabled())) {
+            AppRuleDTO appRuleDTO = new AppRuleDTO();
+            BeanUtils.copyProperties(routeRule, appRuleDTO);
+            appRuleDTO.setAppName(app.getAppName());
+            eventPublisher.publishEvent(new RuleAddEvent(this, appRuleDTO));
+        }
+    }
+
+    private void checkRule(RuleDTO ruleDTO) {
+        QueryWrapper<RouteRule> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(RouteRule::getName, ruleDTO.getName());
+        if (!CollectionUtils.isEmpty(ruleMapper.selectList(wrapper))) {
+            throw new ShipException("规则名称不能重复");
+        }
+        if (MatchObjectEnum.DEFAULT.getCode().equals(ruleDTO.getMatchObject())) {
+            ruleDTO.setMatchKey(null);
+            ruleDTO.setMatchMethod(null);
+            ruleDTO.setMatchRule(null);
+        } else {
+            if (StringUtils.isEmpty(ruleDTO.getMatchKey()) || ruleDTO.getMatchMethod() == null
+                    || StringUtils.isEmpty(ruleDTO.getMatchRule())) {
+                throw new ShipException(ShipExceptionEnum.PARAM_ERROR);
+            }
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -115,8 +143,23 @@ public class RuleServiceImpl implements RuleService {
         }
         List<RuleVO> ruleVOS = RuleVOTransfer.INSTANCE.mapToVOList(rules);
         Map<Integer, String> nameMap = getAppNameMap(ruleVOS.stream().map(r -> r.getAppId()).collect(Collectors.toList()));
-        ruleVOS.forEach(ruleVO -> ruleVO.setAppName(nameMap.get(ruleVO.getAppId())));
+        ruleVOS.forEach(ruleVO -> {
+            ruleVO.setAppName(nameMap.get(ruleVO.getAppId()));
+            ruleVO.setMatchStr(buildMatchStr(ruleVO));
+        });
         return ruleVOS;
+    }
+
+    private String buildMatchStr(RuleVO ruleVO) {
+        if (MatchObjectEnum.DEFAULT.getCode().equals(ruleVO.getMatchObject())){
+            return ruleVO.getMatchObject();
+        }else {
+            StringBuilder sb = new StringBuilder();
+            sb.append("["+ruleVO.getMatchKey()+"] ");
+            sb.append(MatchMethodEnum.getByCode(ruleVO.getMatchMethod()).getDesc());
+            sb.append(" ["+ruleVO.getMatchRule()+"]");
+            return sb.toString();
+        }
     }
 
     private Map<Integer, String> getAppNameMap(List<Integer> appIdList) {

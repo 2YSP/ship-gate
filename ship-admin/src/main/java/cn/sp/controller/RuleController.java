@@ -1,15 +1,19 @@
 package cn.sp.controller;
 
 import cn.sp.pojo.ChangeStatusDTO;
+import cn.sp.pojo.RuleDTO;
 import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.pojo.vo.Result;
 import cn.sp.pojo.vo.RuleVO;
 import cn.sp.service.RuleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -34,13 +38,13 @@ public class RuleController {
     /**
      * add new route rule
      *
-     * @param appRuleDTO
+     * @param ruleDTO
      * @return
      */
     @PostMapping("")
-    public String add(AppRuleDTO appRuleDTO) {
-        ruleService.add(appRuleDTO);
-        return "rule/list";
+    public void add(@Validated RuleDTO ruleDTO, HttpServletResponse response) throws IOException {
+        ruleService.add(ruleDTO);
+        response.sendRedirect("/rule/list");
     }
 
     @ResponseBody

@@ -1,6 +1,7 @@
 package cn.sp.service;
 
 import cn.sp.pojo.ChangeStatusDTO;
+import cn.sp.pojo.RuleDTO;
 import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.pojo.vo.RuleVO;
 
@@ -15,7 +16,7 @@ public interface RuleService {
 
     List<AppRuleDTO> getEnabledRule();
 
-    void add(AppRuleDTO appRuleDTO);
+    void add(RuleDTO ruleDTO);
 
     void delete(Integer id);
 
