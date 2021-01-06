@@ -7,7 +7,6 @@ import cn.sp.pojo.vo.RuleVO;
 import cn.sp.service.RuleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -38,11 +37,10 @@ public class RuleController {
      * @param appRuleDTO
      * @return
      */
-    @ResponseBody
     @PostMapping("")
-    public Result add(@RequestBody @Validated AppRuleDTO appRuleDTO) {
+    public String add(AppRuleDTO appRuleDTO) {
         ruleService.add(appRuleDTO);
-        return Result.success();
+        return "rule/list";
     }
 
     @ResponseBody
