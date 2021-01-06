@@ -12,8 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -27,13 +25,6 @@ public class RuleController {
 
     @Resource
     private RuleService ruleService;
-
-//    @GetMapping("/enabled")
-//    public Result<AppRuleListVO> getEnabledRule() {
-//        AppRuleListVO listVO = new AppRuleListVO();
-//        listVO.setList(ruleService.getEnabledRule());
-//        return Result.success(listVO);
-//    }
 
     /**
      * add new route rule

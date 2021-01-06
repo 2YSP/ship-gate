@@ -149,7 +149,8 @@ public class RuleServiceImpl implements RuleService {
             appId = app.getId();
         }
         QueryWrapper<RouteRule> query = Wrappers.query();
-        query.lambda().eq(Objects.nonNull(appId), RouteRule::getAppId, appId);
+        query.lambda().eq(Objects.nonNull(appId), RouteRule::getAppId, appId)
+        .orderByDesc(RouteRule::getCreatedTime);
         List<RouteRule> rules = ruleMapper.selectList(query);
         if (CollectionUtils.isEmpty(rules)) {
             return Lists.newArrayList();
