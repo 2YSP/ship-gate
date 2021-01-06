@@ -22,7 +22,7 @@
                     <div class="layui-form-item">
                         <div class="layui-inline tool-btn">
                             <button class="layui-btn layui-btn-small layui-btn-normal addBtn"
-                                    data-url="article-add.html"><i class="layui-icon">&#xe654;</i></button>
+                                    data-url="article-add.html" onclick="addRule();"><i class="layui-icon">&#xe654;</i></button>
                         </div>
                         <div class="layui-inline">
                             <input type="text" name="appName" placeholder="请输入服务名称"
@@ -106,6 +106,92 @@
     $(function () {
 
     });
+
+    var html = '<div style="height: 600px;width: 350px;" >\n' +
+        '\t<form class="layui-form" action="" style="margin:20px 20px 20px 20px">\n' +
+        '  <div class="layui-form-item">\n' +
+        '    <label class="layui-form-label">名称：</label>\n' +
+        '    <div class="layui-input-block">\n' +
+        '      <input type="text" name="name" required  lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">\n' +
+        '    </div>\n' +
+        '  </div>\n' +
+        '\n' +
+        '  <div class="layui-form-item">\n' +
+        '    <label class="layui-form-label">路由版本：</label>\n' +
+        '    <div class="layui-input-block">\n' +
+        '      <input type="text" name="version" required  lay-verify="required" placeholder="请输入路由版本" autocomplete="off" class="layui-input">\n' +
+        '    </div>\n' +
+        '  </div>\n' +
+        '\n' +
+        '\n' +
+        '   <div class="layui-form-item">\n' +
+        '    <label class="layui-form-label">匹配对象：</label>\n' +
+        '    <div class="layui-input-block">\n' +
+        '      <select name="matchObject" lay-verify="required">\n' +
+        '        <option value="">请选择匹配对象</option>\n' +
+        '        <option value="0">DEFAULT</option>\n' +
+        '        <option value="1">HEADER</option>\n' +
+        '        <option value="2">QUERY</option>\n' +
+        '      </select>\n' +
+        '    </div>\n' +
+        '  </div>\n' +
+        '\n' +
+        '  <div class="layui-form-item">\n' +
+        '    <label class="layui-form-label">匹配名称：</label>\n' +
+        '    <div class="layui-input-block">\n' +
+        '      <input type="text" name="matchKey" required  lay-verify="required" placeholder="请输入匹配名称" autocomplete="off" class="layui-input">\n' +
+        '    </div>\n' +
+        '  </div>\n' +
+        '\n' +
+        '  <div class="layui-form-item">\n' +
+        '    <label class="layui-form-label">匹配方式：</label>\n' +
+        '    <div class="layui-input-block">\n' +
+        '      <select name="matchMethod" lay-verify="required">\n' +
+        '        <option value="">请选择匹配方式</option>\n' +
+        '        <option value="1">=</option>\n' +
+        '        <option value="2">regex</option>\n' +
+        '        <option value="3">like</option>\n' +
+        '      </select>\n' +
+        '    </div>\n' +
+        '  </div>\n' +
+        '\n' +
+        '    <div class="layui-form-item">\n' +
+        '    <label class="layui-form-label">匹配规则：</label>\n' +
+        '    <div class="layui-input-block">\n' +
+        '      <input type="text" name="matchRule" required  lay-verify="required" placeholder="请输入匹配规则" autocomplete="off" class="layui-input">\n' +
+        '    </div>\n' +
+        '  </div>\n' +
+        '\n' +
+        '    <div class="layui-form-item">\n' +
+        '    <label class="layui-form-label">优先级：</label>\n' +
+        '    <div class="layui-input-block">\n' +
+        '      <input type="text" name="priority" required  lay-verify="required" placeholder="请输入优先级" autocomplete="off" class="layui-input">\n' +
+        '    </div>\n' +
+        '  </div>\n' +
+        '\n' +
+        '  <div class="layui-form-item">\n' +
+        '    <label class="layui-form-label">状态：</label>\n' +
+        '    <div class="layui-input-block">\n' +
+        '      <input type="checkbox" name="enabled" lay-skin="switch" lay-text="启用|禁用">\n' +
+        '    </div>\n' +
+        '  </div>\n' +
+        '  <div class="layui-form-item">\n' +
+        '    <div class="layui-input-block">\n' +
+        '      <button class="layui-btn" lay-submit lay-filter="formDemo">确认</button>\n' +
+        '      <button type="reset" class="layui-btn layui-btn-primary">取消</button>\n' +
+        '    </div>\n' +
+        '  </div>\n' +
+        '</form>\n' +
+        '</div>';
+
+    function addRule() {
+
+        layer.open({
+            type: 1,
+            title: '新增',
+            content: 'aa'
+        });
+    }
     
     function changeStatus(id,status,appName) {
         let obj = {
