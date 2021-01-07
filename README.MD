@@ -44,7 +44,7 @@ You need change some config in application.yml.
 | spring.datasource.*         | Yes  | Db config                    |
 | nacos.discovery.server-addr | Yes  | address of nacos             |
 
-then start the ship-admin.
+then start the ship-admin,the login address of management backend  is http://localhost:9001/user/login/page ,default account  admin/1234.
 
 ## 4. backend project
 
