@@ -101,7 +101,7 @@ Finally start ship-sever and just have fun!
 
   
 
-  If you want to know more details or have any question,please [click here](http://www.2ysp.top/2020/12/31/%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E9%AB%98%E6%80%A7%E8%83%BD%E7%BD%91%E5%85%B3/) or contact me in time.
+  If you want to know more details or have any question,please [click here](https://www.cnblogs.com/2YSP/p/14223892.html) or contact me in time.
 
   
 
