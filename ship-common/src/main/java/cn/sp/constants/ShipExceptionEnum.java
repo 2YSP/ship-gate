@@ -21,13 +21,17 @@ public enum ShipExceptionEnum {
      */
     LOGIN_ERROR(1003, "userName or password error"),
     /**
-     *  not login
+     * not login
      */
-    NOT_LOGIN(1004,"not login"),
+    NOT_LOGIN(1004, "not login"),
     /**
      * token error
      */
-    TOKEN_ERROR(1005,"token error");
+    TOKEN_ERROR(1005, "token error"),
+    /**
+     * connect nacos error
+     */
+    CONNECT_NACOS_ERROR(1006, "connect nacos error");
 
     private Integer code;
 

@@ -24,6 +24,7 @@ public class ServerConfigProperties implements InitializingBean {
      */
     private Long cacheRefreshInterval = 10L;
 
+    @Deprecated
     private Integer webSocketPort;
 
     public Integer getWebSocketPort() {

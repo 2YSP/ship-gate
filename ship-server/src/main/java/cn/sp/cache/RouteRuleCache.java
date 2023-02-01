@@ -2,16 +2,12 @@ package cn.sp.cache;
 
 import cn.sp.exception.ShipException;
 import cn.sp.pojo.dto.AppRuleDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 /**
  * @Author: Ship
@@ -20,7 +16,6 @@ import java.util.stream.Collectors;
  */
 public class RouteRuleCache {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(RouteRuleCache.class);
     /**
      * route rule config cache map
      * key: appName
@@ -38,26 +33,26 @@ public class RouteRuleCache {
         });
     }
 
-    /**
-     * remove rule from cache map
-     *
-     * @param map
-     */
-    public static void remove(Map<String, List<AppRuleDTO>> map) {
-        for (Map.Entry<String, List<AppRuleDTO>> entry : map.entrySet()) {
-            String appName = entry.getKey();
-            List<Integer> ruleIds = entry.getValue().stream().map(AppRuleDTO::getId).collect(Collectors.toList());
-            CopyOnWriteArrayList<AppRuleDTO> ruleDTOS = ROUTE_RULE_MAP.getOrDefault(appName, new CopyOnWriteArrayList<>());
-            ruleDTOS.removeIf(r -> ruleIds.contains(r.getId()));
-            if (CollectionUtils.isEmpty(ruleDTOS)) {
-                // remove all
-                ROUTE_RULE_MAP.remove(appName);
-            } else {
-                // remove some of them
-                ROUTE_RULE_MAP.put(appName, ruleDTOS);
-            }
-        }
-    }
+//    /**
+//     * remove rule from cache map
+//     *
+//     * @param map
+//     */
+//    public static void remove(Map<String, List<AppRuleDTO>> map) {
+//        for (Map.Entry<String, List<AppRuleDTO>> entry : map.entrySet()) {
+//            String appName = entry.getKey();
+//            List<Integer> ruleIds = entry.getValue().stream().map(AppRuleDTO::getId).collect(Collectors.toList());
+//            CopyOnWriteArrayList<AppRuleDTO> ruleDTOS = ROUTE_RULE_MAP.getOrDefault(appName, new CopyOnWriteArrayList<>());
+//            ruleDTOS.removeIf(r -> ruleIds.contains(r.getId()));
+//            if (CollectionUtils.isEmpty(ruleDTOS)) {
+//                // remove all
+//                ROUTE_RULE_MAP.remove(appName);
+//            } else {
+//                // remove some of them
+//                ROUTE_RULE_MAP.put(appName, ruleDTOS);
+//            }
+//        }
+//    }
 
 
     /**

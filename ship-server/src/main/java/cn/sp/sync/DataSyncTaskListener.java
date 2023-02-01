@@ -1,24 +1,38 @@
 package cn.sp.sync;
 
 import cn.sp.cache.PluginCache;
+import cn.sp.cache.RouteRuleCache;
 import cn.sp.cache.ServiceCache;
 import cn.sp.config.ServerConfigProperties;
 import cn.sp.constants.NacosConstants;
+import cn.sp.constants.ShipExceptionEnum;
 import cn.sp.constants.ShipPluginEnum;
+import cn.sp.exception.ShipException;
+import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.pojo.dto.ServiceInstance;
+import cn.sp.utils.GsonUtils;
 import cn.sp.utils.ShipThreadFactory;
+import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.annotation.NacosInjected;
+import com.alibaba.nacos.api.config.ConfigService;
+import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.api.naming.pojo.ListView;
+import com.google.gson.reflect.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -32,6 +46,8 @@ import java.util.stream.Collectors;
 @Configuration
 public class DataSyncTaskListener implements ApplicationListener<ContextRefreshedEvent> {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(DataSyncTaskListener.class);
+
     private static ScheduledThreadPoolExecutor scheduledPool = new ScheduledThreadPoolExecutor(1,
             new ShipThreadFactory("service-sync", true).create());
 
@@ -41,6 +57,11 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
     @Autowired
     private ServerConfigProperties properties;
 
+    private static ConfigService configService;
+
+    @Value("${nacos.discovery.server-addr}")
+    private String baseUrl;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (event.getApplicationContext().getParent() != null) {
@@ -48,8 +69,29 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
         }
         scheduledPool.scheduleWithFixedDelay(new DataSyncTask(namingService)
                 , 0L, properties.getCacheRefreshInterval(), TimeUnit.SECONDS);
-        WebsocketSyncCacheServer websocketSyncCacheServer = new WebsocketSyncCacheServer(properties.getWebSocketPort());
-        websocketSyncCacheServer.start();
+        try {
+            Assert.hasText(baseUrl, "nacos server addr is missing");
+            configService = NacosFactory.createConfigService(baseUrl);
+            // add config listener
+            configService.addListener(NacosConstants.DATA_ID_NAME, NacosConstants.APP_GROUP_NAME, new Listener() {
+                @Override
+                public Executor getExecutor() {
+                    return null;
+                }
+
+                @Override
+                public void receiveConfigInfo(String configInfo) {
+                    LOGGER.info("receive config info:\n{}", configInfo);
+                    List<AppRuleDTO> list = GsonUtils.fromJson(configInfo, new TypeToken<List<AppRuleDTO>>() {
+                    }.getType());
+                    Map<String, List<AppRuleDTO>> map = list.stream().collect(Collectors.groupingBy(AppRuleDTO::getAppName));
+                    RouteRuleCache.add(map);
+                    LOGGER.info("update route rule cache success");
+                }
+            });
+        } catch (NacosException e) {
+            throw new ShipException(ShipExceptionEnum.CONNECT_NACOS_ERROR);
+        }
     }
 
 
