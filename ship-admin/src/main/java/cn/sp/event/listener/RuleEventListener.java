@@ -3,8 +3,6 @@ package cn.sp.event.listener;
 import cn.sp.event.RuleAddEvent;
 import cn.sp.event.RuleDeleteEvent;
 import cn.sp.sync.RouteRuleConfigPublisher;
-import cn.sp.sync.WebsocketSyncCacheClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
