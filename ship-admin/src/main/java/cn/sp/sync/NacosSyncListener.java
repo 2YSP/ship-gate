@@ -51,6 +51,9 @@ public class NacosSyncListener implements ApplicationListener<ContextRefreshedEv
     @Resource
     private AppService appService;
 
+    @Resource
+    private RouteRuleConfigPublisher routeRuleConfigPublisher;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (event.getApplicationContext().getParent() != null) {
@@ -58,7 +61,9 @@ public class NacosSyncListener implements ApplicationListener<ContextRefreshedEv
         }
         String url = "http://" + baseUrl + NacosConstants.INSTANCE_UPDATE_PATH;
         scheduledPool.scheduleWithFixedDelay(new NacosSyncTask(namingService, url, appService), 0, 30L, TimeUnit.SECONDS);
+        routeRuleConfigPublisher.publishRouteRuleConfig();
     }
+
 
     class NacosSyncTask implements Runnable {
 
