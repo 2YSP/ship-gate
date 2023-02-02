@@ -2,12 +2,14 @@ package cn.sp.cache;
 
 import cn.sp.exception.ShipException;
 import cn.sp.pojo.dto.AppRuleDTO;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * @Author: Ship
@@ -23,14 +25,19 @@ public class RouteRuleCache {
     private static final Map<String, CopyOnWriteArrayList<AppRuleDTO>> ROUTE_RULE_MAP = new ConcurrentHashMap<>();
 
     /**
-     * add rule to cache map
+     * add new rules to cache map and remove expired
      *
      * @param map
      */
-    public static void add(Map<String, List<AppRuleDTO>> map) {
+    public static synchronized void add(Map<String, List<AppRuleDTO>> map) {
         map.forEach((key, value) -> {
             ROUTE_RULE_MAP.put(key, new CopyOnWriteArrayList(value));
         });
+        List<String> expiredKeys = ROUTE_RULE_MAP.keySet().stream().filter(i -> !map.containsKey(i)).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(expiredKeys)) {
+            return;
+        }
+        expiredKeys.forEach(k -> ROUTE_RULE_MAP.remove(k));
     }
 
 //    /**
