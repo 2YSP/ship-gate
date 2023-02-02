@@ -1,6 +1,8 @@
 package cn.sp.sync;
 
 import cn.sp.constants.NacosConstants;
+import cn.sp.constants.ShipExceptionEnum;
+import cn.sp.exception.ShipException;
 import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.service.RuleService;
 import cn.sp.utils.GsonUtils;
@@ -12,9 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * @Author: Ship
@@ -32,18 +34,29 @@ public class RouteRuleConfigPublisher {
     @Value("${nacos.discovery.server-addr}")
     private String baseUrl;
 
+    /**
+     * must single instance
+     */
+    private ConfigService configService;
+
+
+    @PostConstruct
+    public void init() {
+        try {
+            configService = NacosFactory.createConfigService(baseUrl);
+        } catch (NacosException e) {
+            throw new ShipException(ShipExceptionEnum.CONNECT_NACOS_ERROR);
+        }
+    }
+
 
     /**
      * publish service route rule config to Nacos
      */
     public void publishRouteRuleConfig() {
         List<AppRuleDTO> ruleDTOS = ruleService.getEnabledRule();
-        // publish config
-        String serverAddr = baseUrl;
-        Properties properties = new Properties();
-        properties.put("serverAddr", serverAddr);
         try {
-            ConfigService configService = NacosFactory.createConfigService(properties);
+            // publish config
             String content = GsonUtils.toJson(ruleDTOS);
             boolean success = configService.publishConfig(NacosConstants.DATA_ID_NAME, NacosConstants.APP_GROUP_NAME, content);
             if (success) {

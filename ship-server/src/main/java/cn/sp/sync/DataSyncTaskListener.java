@@ -72,6 +72,7 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
         try {
             Assert.hasText(baseUrl, "nacos server addr is missing");
             configService = NacosFactory.createConfigService(baseUrl);
+            // TODO pull config in first time
             // add config listener
             configService.addListener(NacosConstants.DATA_ID_NAME, NacosConstants.APP_GROUP_NAME, new Listener() {
                 @Override
