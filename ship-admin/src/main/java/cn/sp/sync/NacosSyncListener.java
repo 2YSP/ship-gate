@@ -6,24 +6,20 @@ import cn.sp.pojo.NacosMetadata;
 import cn.sp.pojo.dto.AppInfoDTO;
 import cn.sp.pojo.dto.ServiceInstance;
 import cn.sp.service.AppService;
-import cn.sp.utils.OkhttpTool;
+import cn.sp.utils.GsonUtils;
 import cn.sp.utils.ShipThreadFactory;
-import cn.sp.utils.StringTools;
 import com.alibaba.nacos.api.annotation.NacosInjected;
 import com.alibaba.nacos.api.naming.NamingService;
+import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.api.naming.pojo.ListView;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -45,9 +41,6 @@ public class NacosSyncListener implements ApplicationListener<ContextRefreshedEv
     @NacosInjected
     private NamingService namingService;
 
-    @Value("${nacos.discovery.server-addr}")
-    private String baseUrl;
-
     @Resource
     private AppService appService;
 
@@ -59,9 +52,9 @@ public class NacosSyncListener implements ApplicationListener<ContextRefreshedEv
         if (event.getApplicationContext().getParent() != null) {
             return;
         }
-        String url = "http://" + baseUrl + NacosConstants.INSTANCE_UPDATE_PATH;
-        scheduledPool.scheduleWithFixedDelay(new NacosSyncTask(namingService, url, appService), 0, 30L, TimeUnit.SECONDS);
+        scheduledPool.scheduleWithFixedDelay(new NacosSyncTask(namingService, appService), 0, 30L, TimeUnit.SECONDS);
         routeRuleConfigPublisher.publishRouteRuleConfig();
+        LOGGER.info("NacosSyncListener init success.");
     }
 
 
@@ -69,15 +62,10 @@ public class NacosSyncListener implements ApplicationListener<ContextRefreshedEv
 
         private NamingService namingService;
 
-        private String url;
-
         private AppService appService;
 
-        private Gson gson = new GsonBuilder().create();
-
-        public NacosSyncTask(NamingService namingService, String url, AppService appService) {
+        public NacosSyncTask(NamingService namingService, AppService appService) {
             this.namingService = namingService;
-            this.url = url;
             this.appService = appService;
         }
 
@@ -98,33 +86,30 @@ public class NacosSyncListener implements ApplicationListener<ContextRefreshedEv
                     if (CollectionUtils.isEmpty(appInfo.getInstances())) {
                         continue;
                     }
-                    for (ServiceInstance instance : appInfo.getInstances()) {
-                        Map<String, Object> queryMap = buildQueryMap(appInfo, instance);
-                        String resp = OkhttpTool.doPut(url, queryMap, "");
-                        LOGGER.debug("response :{}", resp);
+                    for (ServiceInstance serviceInstance : appInfo.getInstances()) {
+                        Instance instance = buildInstance(appInfo, serviceInstance);
+                        namingService.registerInstance(appInfo.getAppName(), NacosConstants.APP_GROUP_NAME, instance);
                     }
                 }
-
             } catch (Exception e) {
                 LOGGER.error("nacos sync task error", e);
             }
         }
 
-        private Map<String, Object> buildQueryMap(AppInfoDTO appInfo, ServiceInstance instance) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("serviceName", appInfo.getAppName());
-            map.put("groupName", NacosConstants.APP_GROUP_NAME);
-            map.put("ip", instance.getIp());
-            map.put("port", instance.getPort());
-            map.put("weight", instance.getWeight().doubleValue());
+        private Instance buildInstance(AppInfoDTO appInfo, ServiceInstance serviceInstance) {
+            Instance instance = new Instance();
+            instance.setIp(serviceInstance.getIp());
+            instance.setPort(serviceInstance.getPort());
+            instance.setWeight(serviceInstance.getWeight().doubleValue());
+            instance.setEphemeral(true);
+            instance.setEnabled(EnabledEnum.ENABLE.getCode().equals(appInfo.getEnabled()));
             NacosMetadata metadata = new NacosMetadata();
             metadata.setAppName(appInfo.getAppName());
-            metadata.setVersion(instance.getVersion());
+            metadata.setVersion(serviceInstance.getVersion());
             metadata.setPlugins(String.join(",", appInfo.getEnabledPlugins()));
-            map.put("metadata", StringTools.urlEncode(gson.toJson(metadata)));
-            map.put("ephemeral", true);
-            map.put("enabled", EnabledEnum.ENABLE.getCode().equals(appInfo.getEnabled()));
-            return map;
+            Map<String, String> instanceMeta = GsonUtils.fromJson(GsonUtils.toJson(metadata), Map.class);
+            instance.setMetadata(instanceMeta);
+            return instance;
         }
     }
 }
