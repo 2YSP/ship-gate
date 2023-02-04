@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Created by 2YSP on 2020/12/27
  */
 @ConfigurationProperties(prefix = "ship.gate")
-public class ServerConfigProperties implements InitializingBean {
+public class ServerConfigProperties {
     /**
      * 负载均衡算法，默认轮询
      */
@@ -23,17 +23,6 @@ public class ServerConfigProperties implements InitializingBean {
      * 缓存刷新间隔，默认10s
      */
     private Long cacheRefreshInterval = 10L;
-
-    @Deprecated
-    private Integer webSocketPort;
-
-    public Integer getWebSocketPort() {
-        return webSocketPort;
-    }
-
-    public void setWebSocketPort(Integer webSocketPort) {
-        this.webSocketPort = webSocketPort;
-    }
 
     public Long getCacheRefreshInterval() {
         return cacheRefreshInterval;
@@ -59,12 +48,5 @@ public class ServerConfigProperties implements InitializingBean {
         this.loadBalance = loadBalance;
     }
 
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        if (this.webSocketPort == null || this.webSocketPort <= 0) {
-            throw new ShipException(ShipExceptionEnum.CONFIG_ERROR);
-        }
-    }
 
 }

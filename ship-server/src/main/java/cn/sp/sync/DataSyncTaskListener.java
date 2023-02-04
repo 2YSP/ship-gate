@@ -11,6 +11,7 @@ import cn.sp.exception.ShipException;
 import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.pojo.dto.ServiceInstance;
 import cn.sp.utils.GsonUtils;
+import cn.sp.utils.IpUtil;
 import cn.sp.utils.ShipThreadFactory;
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.annotation.NacosInjected;
@@ -24,10 +25,10 @@ import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
@@ -59,19 +60,36 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
 
     private static ConfigService configService;
 
-    @Value("${nacos.discovery.server-addr}")
-    private String baseUrl;
+    private Environment environment;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (event.getApplicationContext().getParent() != null) {
             return;
         }
+        environment = event.getApplicationContext().getEnvironment();
         scheduledPool.scheduleWithFixedDelay(new DataSyncTask(namingService)
                 , 0L, properties.getCacheRefreshInterval(), TimeUnit.SECONDS);
+        registItself();
+        initConfig();
+    }
+
+    private void registItself() {
+        Instance instance = new Instance();
+        instance.setIp(IpUtil.getLocalIpAddress());
+        instance.setPort(Integer.valueOf(environment.getProperty("server.port")));
         try {
-            Assert.hasText(baseUrl, "nacos server addr is missing");
-            configService = NacosFactory.createConfigService(baseUrl);
+            namingService.registerInstance("ship-server", NacosConstants.APP_GROUP_NAME, instance);
+        } catch (NacosException e) {
+            throw new ShipException(ShipExceptionEnum.CONNECT_NACOS_ERROR);
+        }
+    }
+
+    private void initConfig() {
+        try {
+            String serverAddr = environment.getProperty("nacos.discovery.server-addr");
+            Assert.hasText(serverAddr, "nacos server addr is missing");
+            configService = NacosFactory.createConfigService(serverAddr);
             // pull config in first time
             String config = configService.getConfig(NacosConstants.DATA_ID_NAME, NacosConstants.APP_GROUP_NAME, 5000);
             DataSyncTaskListener.updateConfig(config);
