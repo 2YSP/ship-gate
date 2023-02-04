@@ -72,7 +72,7 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
      * @return
      */
     private boolean check(ClientConfigProperties properties) {
-        if (properties.getPort() == null || properties.getContextPath() == null
+        if (properties.getPort() == null
                 || properties.getVersion() == null || properties.getAppName() == null
                 || properties.getAdminUrl() == null) {
             return false;
@@ -136,7 +136,7 @@ public class AutoRegisterListener implements ApplicationListener<ContextRefreshe
     private RegisterAppDTO buildRegisterAppDTO(Instance instance) {
         RegisterAppDTO registerAppDTO = new RegisterAppDTO();
         registerAppDTO.setAppName(properties.getAppName());
-        registerAppDTO.setContextPath(properties.getContextPath());
+        registerAppDTO.setContextPath("/" + properties.getAppName());
         registerAppDTO.setIp(instance.getIp());
         registerAppDTO.setPort(instance.getPort());
         registerAppDTO.setVersion(properties.getVersion());

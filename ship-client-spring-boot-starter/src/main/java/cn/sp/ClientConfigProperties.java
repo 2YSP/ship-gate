@@ -12,10 +12,6 @@ public class ClientConfigProperties {
      */
     private Integer port;
     /**
-     * 请求根路径
-     */
-    private String contextPath;
-    /**
      * 应用名称
      */
     private String appName;
@@ -51,13 +47,13 @@ public class ClientConfigProperties {
         this.port = port;
     }
 
-    public String getContextPath() {
-        return contextPath;
-    }
-
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
+//    public String getContextPath() {
+//        return contextPath;
+//    }
+//
+//    public void setContextPath(String contextPath) {
+//        this.contextPath = contextPath;
+//    }
 
     public String getAppName() {
         return appName;

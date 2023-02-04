@@ -72,7 +72,9 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
         try {
             Assert.hasText(baseUrl, "nacos server addr is missing");
             configService = NacosFactory.createConfigService(baseUrl);
-            // TODO pull config in first time
+            // pull config in first time
+            String config = configService.getConfig(NacosConstants.DATA_ID_NAME, NacosConstants.APP_GROUP_NAME, 5000);
+            DataSyncTaskListener.updateConfig(config);
             // add config listener
             configService.addListener(NacosConstants.DATA_ID_NAME, NacosConstants.APP_GROUP_NAME, new Listener() {
                 @Override
@@ -83,16 +85,21 @@ public class DataSyncTaskListener implements ApplicationListener<ContextRefreshe
                 @Override
                 public void receiveConfigInfo(String configInfo) {
                     LOGGER.info("receive config info:\n{}", configInfo);
-                    List<AppRuleDTO> list = GsonUtils.fromJson(configInfo, new TypeToken<List<AppRuleDTO>>() {
-                    }.getType());
-                    Map<String, List<AppRuleDTO>> map = list.stream().collect(Collectors.groupingBy(AppRuleDTO::getAppName));
-                    RouteRuleCache.add(map);
-                    LOGGER.info("update route rule cache success");
+                    DataSyncTaskListener.updateConfig(configInfo);
                 }
             });
         } catch (NacosException e) {
             throw new ShipException(ShipExceptionEnum.CONNECT_NACOS_ERROR);
         }
+    }
+
+
+    public static void updateConfig(String configInfo) {
+        List<AppRuleDTO> list = GsonUtils.fromJson(configInfo, new TypeToken<List<AppRuleDTO>>() {
+        }.getType());
+        Map<String, List<AppRuleDTO>> map = list.stream().collect(Collectors.groupingBy(AppRuleDTO::getAppName));
+        RouteRuleCache.add(map);
+        LOGGER.info("update route rule cache success");
     }
 
 
