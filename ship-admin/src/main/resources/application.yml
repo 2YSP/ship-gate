@@ -18,7 +18,6 @@ spring:
       content-type: text/html
 
 ship:
-  server-web-socket-url: ws://127.0.0.1:9999
   user-password-salt: d5ec0a02
 
 nacos:
