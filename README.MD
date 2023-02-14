@@ -22,7 +22,7 @@ Now it only supports HTTP protocol forward,it is for learning communication only
 - Support HTTP protocol,include GET,PUT,POST etc.
 - Support version-based dynamic routing rules
 - Support interface authentication (not implemented)
-
+- Support cluster deployment
 # Usage
 
 ## 1.nacos
@@ -40,7 +40,6 @@ You need change some config in application.yml.
 | config item                 | Must | Desc                         |
 | --------------------------- | ---- | ---------------------------- |
 | server.port                 | Yes  | Ship-admin start port        |
-| ship.server-web-socket-url  | Yes  | websocket url of ship-server |
 | spring.datasource.*         | Yes  | Db config                    |
 | nacos.discovery.server-addr | Yes  | address of nacos             |
 
@@ -63,9 +62,8 @@ Next change some config in application.yml.
 | config item                 | Must | Desc                                                         |
 | --------------------------- | ---- | ------------------------------------------------------------ |
 | nacos.discovery.server-addr | Yes  | address of nacos                                             |
-| ship.http.app-name          | Yes  | your app name of backend project,eg: order                   |
+| ship.http.app-name          | Yes  | your app name of backend project,eg: order,the context-path is same with app-name|
 | ship.http.version           | Yes  | version of app,eg:gray_1.0                                   |
-| ship.http.context-path      | Yes  | base path of this project,must be same with app-name,eg: /order |
 | ship.http.port              | Yes  | the port of project,same with sever.port                     |
 | ship.http.admin-url         | Yes  | the url of ship-admin,eg: 127.0.0.1:9001                     |
 
@@ -81,7 +79,6 @@ It's most important part of ship-gate,similarly you must config some option.
 | ship.gate.load-balance           | No   | random,round,weightRound | load balance algorithm,default round      |
 | ship.gate.time-out-millis        | No   |                          | time out millis of gateway,default 3000ms |
 | ship.gate.cache-refresh-interval | No   |                          | default 10s                               |
-| ship.gate.web-socket-port        | Yes  |                          | websocket port to listen                  |
 
 Finally start ship-sever and just have fun!
 
@@ -101,7 +98,7 @@ Finally start ship-sever and just have fun!
 
   
 
-  If you want to know more details or have any question,please [click here](https://www.cnblogs.com/2YSP/p/14223892.html) or contact me in time.
+If you want to know more details or have any question,please [click here](https://www.cnblogs.com/2YSP/p/14223892.html) or contact me in time.
 
   
 
