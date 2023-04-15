@@ -1,8 +1,9 @@
-package cn.sp.plugin;
+package cn.sp.plugin.impl;
 
 import cn.sp.chain.PluginChain;
 import cn.sp.config.ServerConfigProperties;
 import cn.sp.constants.ShipPluginEnum;
+import cn.sp.plugin.AbstractShipPlugin;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 

@@ -26,4 +26,17 @@ public class ShipResponseUtil {
                 .bufferFactory().wrap(resp.getBytes())));
     }
 
+    /**
+     *
+     * @param exchange
+     * @param t
+     * @param <T>
+     * @return
+     */
+    public static <T> Mono<Void> doResponse(ServerWebExchange exchange, T t) {
+        Assert.notNull(t, "response object can't be null");
+        String resp = gson.toJson(t);
+        return doResponse(exchange, resp);
+    }
+
 }

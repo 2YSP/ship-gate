@@ -21,4 +21,10 @@ public class WebConfig {
     public PluginFilter pluginFilter(@Autowired ServerConfigProperties properties) {
         return new PluginFilter(properties);
     }
+
+    @Bean
+    public ShipExceptionHandler shipExceptionHandler(){
+        return new ShipExceptionHandler();
+    }
+
 }

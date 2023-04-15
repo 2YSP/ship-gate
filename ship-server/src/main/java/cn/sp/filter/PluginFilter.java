@@ -5,8 +5,9 @@ import cn.sp.chain.PluginChain;
 import cn.sp.config.ServerConfigProperties;
 import cn.sp.constants.ShipExceptionEnum;
 import cn.sp.exception.ShipException;
-import cn.sp.plugin.AuthPlugin;
-import cn.sp.plugin.DynamicRoutePlugin;
+import cn.sp.plugin.impl.AuthPlugin;
+import cn.sp.plugin.impl.DynamicRoutePlugin;
+import cn.sp.plugin.impl.RateLimitPlugin;
 import org.springframework.http.server.RequestPath;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
@@ -36,6 +37,7 @@ public class PluginFilter implements WebFilter {
         PluginChain pluginChain = new PluginChain(properties, appName);
         pluginChain.addPlugin(new DynamicRoutePlugin(properties));
         pluginChain.addPlugin(new AuthPlugin(properties));
+        pluginChain.addPlugin(new RateLimitPlugin(properties));
         return pluginChain.execute(exchange, pluginChain);
     }
 

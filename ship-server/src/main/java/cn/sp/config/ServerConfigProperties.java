@@ -24,6 +24,32 @@ public class ServerConfigProperties {
      */
     private Long cacheRefreshInterval = 10L;
 
+    /**
+     * 限流方式QPS或THREAD，默认QPS
+     */
+    private String rateLimitType = "QPS";
+    /**
+     * 限流数量
+     */
+    private Integer rateLimitCount;
+
+
+    public String getRateLimitType() {
+        return rateLimitType;
+    }
+
+    public void setRateLimitType(String rateLimitType) {
+        this.rateLimitType = rateLimitType;
+    }
+
+    public Integer getRateLimitCount() {
+        return rateLimitCount;
+    }
+
+    public void setRateLimitCount(Integer rateLimitCount) {
+        this.rateLimitCount = rateLimitCount;
+    }
+
     public Long getCacheRefreshInterval() {
         return cacheRefreshInterval;
     }

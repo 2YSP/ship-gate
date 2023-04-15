@@ -1,4 +1,4 @@
-package cn.sp.plugin;
+package cn.sp.plugin.impl;
 
 import cn.sp.cache.LoadBalanceFactory;
 import cn.sp.cache.RouteRuleCache;
@@ -10,6 +10,7 @@ import cn.sp.constants.MatchObjectEnum;
 import cn.sp.constants.ShipExceptionEnum;
 import cn.sp.constants.ShipPluginEnum;
 import cn.sp.exception.ShipException;
+import cn.sp.plugin.AbstractShipPlugin;
 import cn.sp.pojo.dto.AppRuleDTO;
 import cn.sp.pojo.dto.ServiceInstance;
 import cn.sp.spi.LoadBalance;

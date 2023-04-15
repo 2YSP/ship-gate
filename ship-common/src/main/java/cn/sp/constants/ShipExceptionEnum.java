@@ -31,7 +31,11 @@ public enum ShipExceptionEnum {
     /**
      * connect nacos error
      */
-    CONNECT_NACOS_ERROR(1006, "connect nacos error");
+    CONNECT_NACOS_ERROR(1006, "connect nacos error"),
+    /**
+     * request limit error
+     */
+    REQUEST_LIMIT_ERROR(1007,"request limit error");
 
     private Integer code;
 

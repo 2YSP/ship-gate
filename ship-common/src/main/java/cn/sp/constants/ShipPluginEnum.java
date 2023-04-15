@@ -13,7 +13,9 @@ public enum ShipPluginEnum {
     /**
      * Auth
      */
-    AUTH("Auth",1,"鉴权插件");
+    AUTH("Auth", 1, "鉴权插件"),
+
+    RATE_LIMIT("RATE_LIMIT", 0, "限流插件");
 
     private String name;
 
