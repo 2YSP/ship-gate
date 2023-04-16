@@ -10,3 +10,5 @@ ship:
     load-balance: round
     time-out-millis: 3000
     cache-refresh-interval: 10
+    rate-limit-type: QPS
+    rate-limit-count: 4

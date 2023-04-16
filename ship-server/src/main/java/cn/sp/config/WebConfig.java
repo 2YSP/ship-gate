@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.reactive.config.EnableWebFlux;
 
 /**
@@ -22,6 +23,11 @@ public class WebConfig {
         return new PluginFilter(properties);
     }
 
+    /**
+     * set order -2 to before DefaultErrorWebExceptionHandler(-1) ResponseStatusExceptionHandler(0)
+     * @return
+     */
+    @Order(-2)
     @Bean
     public ShipExceptionHandler shipExceptionHandler(){
         return new ShipExceptionHandler();

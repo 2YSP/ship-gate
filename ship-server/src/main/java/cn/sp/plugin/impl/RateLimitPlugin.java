@@ -36,7 +36,7 @@ public class RateLimitPlugin extends AbstractShipPlugin {
     private static Map<String, Integer> rateLimitTypeMap = new HashMap<>();
 
     static {
-        rateLimitTypeMap.put(ServerConstants.LIMIT_BY_OPS, RuleConstant.FLOW_GRADE_QPS);
+        rateLimitTypeMap.put(ServerConstants.LIMIT_BY_QPS, RuleConstant.FLOW_GRADE_QPS);
         rateLimitTypeMap.put(ServerConstants.LIMIT_BY_THREAD, RuleConstant.FLOW_GRADE_THREAD);
     }
 
@@ -56,16 +56,8 @@ public class RateLimitPlugin extends AbstractShipPlugin {
 
     @Override
     public Mono<Void> execute(ServerWebExchange exchange, PluginChain pluginChain) {
-        Assert.hasText(properties.getRateLimitType(), "config ship.gate.rateLimitType required!");
-        Assert.notNull(properties.getRateLimitCount(), "config ship.gate.rateLimitCount required!");
         String appName = pluginChain.getAppName();
-        List<FlowRule> list = new ArrayList<>();
-        FlowRule flowRule = new FlowRule();
-        flowRule.setResource(appName);
-        flowRule.setGrade(rateLimitTypeMap.get(properties.getRateLimitType()));
-        flowRule.setCount(properties.getRateLimitCount().doubleValue());
-        list.add(flowRule);
-        FlowRuleManager.loadRules(list);
+        initFlowRules(appName);
         if (SphO.entry(appName)) {
             // 务必保证finally会被执行
             try {
@@ -78,5 +70,17 @@ public class RateLimitPlugin extends AbstractShipPlugin {
             }
         }
         throw new ShipException(ShipExceptionEnum.REQUEST_LIMIT_ERROR);
+    }
+
+    private void initFlowRules(String resource) {
+        Assert.hasText(properties.getRateLimitType(), "config ship.gate.rateLimitType required!");
+        Assert.notNull(properties.getRateLimitCount(), "config ship.gate.rateLimitCount required!");
+        List<FlowRule> list = new ArrayList<>();
+        FlowRule flowRule = new FlowRule();
+        flowRule.setResource(resource);
+        flowRule.setGrade(rateLimitTypeMap.get(properties.getRateLimitType()));
+        flowRule.setCount(properties.getRateLimitCount().doubleValue());
+        list.add(flowRule);
+        FlowRuleManager.loadRules(list);
     }
 }
