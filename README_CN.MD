@@ -1,30 +1,27 @@
 ​															**High Performance,Responsive API Gateways**
 
-<a href="">中文版</a>
-# Description
+# 描述
 
-This is a  high Performance,Responsive API Gateway based on SpringWebFlux and Netty.
+这是一个基于SpringWebFlux和Netty开发的高性能响应式的API网关，主要为了学习交流。
 
-Now it only supports HTTP protocol forward,it is for learning communication only.
+# 项目结构
 
-# Project structure
-
-- Ship-admin: gateway management console,supports config route rule etc.
-- Ship-server: gateway server,core function module.
-- Ship-ship-client-spring-boot-starter: gateway client,automatically register service information to the registration center.
-- Ship-gate-example: an example of how to use the gateway
-- Ship-common: some common codes,like pojo,constants,tools etc.
+- Ship-admin: 网关管理后台，支持路由规则配置，实例权重配置等。
+- Ship-server: 网关服务端，核心模块。
+- Ship-ship-client-spring-boot-starter: 网关客户端，自动向注册中心注册服务信息。
+- Ship-gate-example: 如何使用网关的示例
+- Ship-common: 一个公共的代码，比如POJO，常量和工具类等。
 
 # Features
 
-- Support custom your own plugins
-- Support A/B test and grayscale publishing
-- Support multiple load balancing strategies
-- Support HTTP protocol,include GET,PUT,POST etc.
-- Support version-based dynamic routing rules
-- Support interface authentication (not implemented)
-- Support cluster deployment
-- Support service rate limit by using Sentinel 
+- 支持自定义您自己的插件
+- 支持A/B测试和灰度发布  
+- 支持多种负载均衡策略   
+- 支持HTTP协议，包括 GET,PUT,POST 等
+- 支持基于版本的动态路由规则
+- 支持接口鉴权 (not implemented)
+- 支持集群化部署
+- 支持服务限流，基于Sentinel实现
 # Usage
 
 ## 1.nacos
