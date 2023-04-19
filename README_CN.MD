@@ -12,7 +12,7 @@
 - Ship-gate-example: 如何使用网关的示例
 - Ship-common: 一个公共的代码，比如POJO，常量和工具类等。
 
-# Features
+# 特性
 
 - 支持自定义您自己的插件
 - 支持A/B测试和灰度发布  
@@ -22,7 +22,7 @@
 - 支持接口鉴权 (not implemented)
 - 支持集群化部署
 - 支持服务限流，基于Sentinel实现
-# Usage
+# 用法
 
 ## 1.nacos
 
