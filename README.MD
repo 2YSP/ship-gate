@@ -1,6 +1,10 @@
-​															**High Performance,Responsive API Gateways**
+**High Performance,Responsive API Gateways**
 
-<a href="">中文版</a>
+![](https://img.shields.io/github/stars/2YSP/ship-gate.svg)
+![](https://img.shields.io/github/forks/2YSP/ship-gate.svg)
+![](https://img.shields.io/github/release/2YSP/ship-gate.svg)
+
+<a href="https://github.com/2YSP/ship-gate/blob/master/README_CN.MD">中文版</a>
 # Description
 
 This is a  high Performance,Responsive API Gateway based on SpringWebFlux and Netty.

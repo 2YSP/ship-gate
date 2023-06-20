@@ -1,4 +1,4 @@
-​															**High Performance,Responsive API Gateways**
+​															**高性能响应式的API网关ship-gate**
 
 # 描述
 
@@ -12,7 +12,7 @@
 - Ship-gate-example: 如何使用网关的示例
 - Ship-common: 一个公共的代码，比如POJO，常量和工具类等。
 
-# Features
+# 特性
 
 - 支持自定义您自己的插件
 - 支持A/B测试和灰度发布  
@@ -22,31 +22,31 @@
 - 支持接口鉴权 (not implemented)
 - 支持集群化部署
 - 支持服务限流，基于Sentinel实现
-# Usage
+# 用法
 
 ## 1.nacos
 
-You can refer to this(https://nacos.io/en-us/docs/quick-start.html) to install the nacos.
+你可以参考这个(https://nacos.io/en-us/docs/quick-start.html) 去安装nacos。
 
-## 2.create db
+## 2.创建数据库
 
-Use the ship.sql in the project to create database first.
+首先，使用项目里的ship.sql去创建数据库
 
-## 3. ship-admin
+## 3. 启动ship-admin
 
-You need change some config in application.yml.
+你需要修改application.yml文件中的一些配置
 
-| config item                 | Must | Desc                         |
+| 配置项                 | 是否必须 | 描述                         |
 | --------------------------- | ---- | ---------------------------- |
-| server.port                 | Yes  | Ship-admin start port        |
-| spring.datasource.*         | Yes  | Db config                    |
-| nacos.discovery.server-addr | Yes  | address of nacos             |
+| server.port                 | 是  | Ship-admin的启动端口号        |
+| spring.datasource.*         | 是  | 数据库配置                   |
+| nacos.discovery.server-addr | 是  | Nacos服务端的地址           |
 
-then start the ship-admin,the login address of management backend  is http://localhost:9001/user/login/page ,default account  admin/1234.
+然后本地启动ship-admin，后台登录地址是http://localhost:9001/user/login/page ，默认账号admin/1234。
 
-## 4. backend project
+## 4. 创建后端服务
 
-New a springboot project and dependency in pom.xml.
+创建一个springboot项目并在pom.xml添加以下依赖
 
 ```xml
  <dependency>
@@ -56,38 +56,37 @@ New a springboot project and dependency in pom.xml.
         </dependency>
 ```
 
-Next change some config in application.yml.
+接着在application.yml文件修改一些配置
 
-| config item                 | Must | Desc                                                         |
+| 配置项                 | 是否必须 | 描述                                                         |
 | --------------------------- | ---- | ------------------------------------------------------------ |
-| nacos.discovery.server-addr | Yes  | address of nacos                                             |
-| ship.http.app-name          | Yes  | your app name of backend project,eg: order,the context-path is same with app-name|
-| ship.http.version           | Yes  | version of app,eg:gray_1.0                                   |
-| ship.http.port              | Yes  | the port of project,same with sever.port                     |
-| ship.http.admin-url         | Yes  | the url of ship-admin,eg: 127.0.0.1:9001                     |
+| nacos.discovery.server-addr | 是  | 注册中心nacos的地址                                            |
+| ship.http.app-name          | 是  | 后台服务的appName,如：order,请求上下文和appName保持一致|
+| ship.http.version           | 是  | 后台服务的版本,如:gray_1.0                                   |
+| ship.http.port              | 是  | 项目的端口号,与sever.port一致                     |
+| ship.http.admin-url         | 是  | ship-admin的访问URL,如：127.0.0.1:9001                     |
 
-If you think it's trouble,you can just use the ship-gate-example for test.
+如果你认为这太麻烦，你可以直接使用ship-gate-example工程去测试。
 
 ## 5. ship-server
 
-It's most important part of ship-gate,similarly you must config some option.
+这是ship-gate最重要的部分，同样的你必须配置一些选项。
 
-| config item                      | Must | Option value             | Desc                                      |
+| 配置项                      | 是否必须 | 可选项            | 描述                                      |
 | -------------------------------- | ---- | ------------------------ | ----------------------------------------- |
-| nacos.discovery.server-addr      | Yes  |                          | address of nacos                          |
-| ship.gate.load-balance           | No   | random,round,weightRound | load balance algorithm,default round      |
-| ship.gate.time-out-millis        | No   |                          | time out millis of gateway,default 3000ms |
-| ship.gate.cache-refresh-interval | No   |                          | default 10s                               |
+| nacos.discovery.server-addr      | 是  |                          | 注册中心nacos的地址                              |
+| ship.gate.load-balance           | 否   | random,round,weightRound | 负载均衡算法，默认round（轮询）      |
+| ship.gate.time-out-millis        | 否   |                          | 网关请求超时时间，默认3000ms |
+| ship.gate.cache-refresh-interval | 否   |                          | 缓存刷新间隔，默认 10s                               |
 
-Finally start ship-sever and just have fun!
+最后启动ship-sever，祝你玩得开心！
 
 
-
-# Architecture diagram
+# 架构设计
 
 ![网关设计](http://wwww.2ysp.top/gateway.png)
 
-# Prerequisite
+# 环境要求
 
 - JDK1.8+
 
@@ -96,8 +95,9 @@ Finally start ship-sever and just have fun!
 - Nacos 1.3+
 
   
+如果您想了解更多详细信息或有任何问题，请[点击此处](https://www.cnblogs.com/2YSP/p/14223892.html)或者及时与我联系。
 
-If you want to know more details or have any question,please [click here](https://www.cnblogs.com/2YSP/p/14223892.html) or contact me in time.
+
 
   
 
